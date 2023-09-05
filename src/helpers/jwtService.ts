@@ -9,8 +9,8 @@ if (!secret) {
 }
 
 export class JwtService {
-  async generateJwt(id: string, expire: string) {
-    return jwt.sign({id}, secret, {expiresIn: expire});
+  async generateJwt(id: string, expire: string, deviceID?: string) {
+    return jwt.sign({id, deviceId: deviceID}, secret, {expiresIn: expire});
   }
 
   async getUserByToken(token: string) {

@@ -8,13 +8,14 @@ import {CheckCodeValidator} from "./validator/check-code.validator";
 import {FindCheckEmailValidator} from "./validator/find-check-email.validator";
 import {CreateUserValidator} from "./validator/create-user.validator";
 import {CheckToken} from "../helpers/check-token";
+import {RateLimitMiddleware} from "../middleware/rate-limit.middleware";
 
 const router = express.Router();
 const service = new AuthService();
 const jwtService = new JwtService();
 
-router.post('/login', LoginValidator, InputValidationMiddleware, async(req:Request, res: Response) => {
-  const data = await service.login(req.body);
+router.post('/login', LoginValidator, InputValidationMiddleware, RateLimitMiddleware, async(req:Request, res: Response) => {
+  const data = await service.login(req.body, req.ip, req.headers["user-agent"]!);
   if(!data || typeof data === "boolean"){
     return res.status(401).send('Password or login incorrect')
   }
@@ -37,10 +38,11 @@ router.post('/refresh-token', async(req: Request, res: Response) => {
 
 router.post('/logout', async(req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
+  const accessToken = req.cookies.accessToken;
   if(!refreshToken){
     return res.status(401).send();
   }
-  const data = await service.logout(refreshToken);
+  const data = await service.logout(refreshToken, accessToken);
   if(!data){
     return res.status(401).send();
   }
@@ -62,12 +64,12 @@ router.get('/me', AuthMiddleware, async(req: Request, res: Response) => {
 })
 
 
-router.post('/registration', CreateUserValidator, InputValidationMiddleware, async(req: Request, res: Response) => {
+router.post('/registration', CreateUserValidator, InputValidationMiddleware, RateLimitMiddleware, async(req: Request, res: Response) => {
   await service.registration(req.body);
   return res.status(204).send()
 })
 
-router.post('/registration-confirmation', CheckCodeValidator, InputValidationMiddleware, async(req: Request, res: Response) => {
+router.post('/registration-confirmation', CheckCodeValidator, InputValidationMiddleware, RateLimitMiddleware, async(req: Request, res: Response) => {
   const isConfirm = service.confirmUser(req.body.code);
   if(!isConfirm){
     return res.status(400).send();
@@ -76,7 +78,7 @@ router.post('/registration-confirmation', CheckCodeValidator, InputValidationMid
 })
 
 
-router.post('/registration-email-resending', FindCheckEmailValidator, InputValidationMiddleware, async(req: Request, res: Response) => {
+router.post('/registration-email-resending', FindCheckEmailValidator, InputValidationMiddleware, RateLimitMiddleware, async(req: Request, res: Response) => {
   const isConfirm = service.resendEmail(req.body.email);
   if(!isConfirm){
     return res.status(400).send()

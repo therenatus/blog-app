@@ -29,7 +29,6 @@ export async function FindAllWithCount<T>(query: IQuery, collection: Collection<
   if(id) {
     filter.accountData.blogId = id;
   }
-  console.log(filter)
   const total = await collection.countDocuments(filter);
   const data =  await collection
     .find(filter, {projection: { 'accountData.hashPassword': 0}})

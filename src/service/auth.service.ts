@@ -10,15 +10,22 @@ import {ITokenResponse} from "../types/token-response.interface";
 import {JwtService} from "../helpers/jwtService";
 import {CheckToken} from "../helpers/check-token";
 import {TokenRepository} from "../repositories/token.repository";
+import {SessionRepository} from "../repositories/session.repository";
 
 
 const Repository = new UserRepository();
 const emailManager = new EmailManagers();
 const jwtService = new JwtService();
 const tokenRepository = new TokenRepository();
+const sessionRepository = new SessionRepository();
 export class AuthService {
-  async login (body: any): Promise<ITokenResponse | boolean> {
+  async login (body: any, ip: string, userAgent: string): Promise<ITokenResponse | boolean> {
+    const deviceId: string = uuidv4();
     const user = await Repository.getOne(body.loginOrEmail);
+    const session = await sessionRepository.login({deviceId, ip, title: userAgent, lastActiveDate: new Date()})
+    if(!session){
+      return false;
+    }
     if(!user){
       return false;
     }
@@ -26,17 +33,19 @@ export class AuthService {
     if(!validPassword){
       return false;
     }
-    return  await _generateTokens(user.accountData.id);
+    return  await _generateTokens(user.accountData.id, deviceId);
   }
 
   async refreshToken(token: string): Promise<ITokenResponse | null> {
     const id = CheckToken(token);
+    const d = await jwtService.getUserByToken(token);
     const validToken = await tokenRepository.checkFromBlackList(token);
     if(!id || !validToken){
       return null;
     }
+    await sessionRepository.updateLastActive(d.deviceId, new Date())
     await tokenRepository.addToBlackList(token);
-    return await _generateTokens(id)
+    return await _generateTokens(id, d.deviceId)
   }
 
   async getMe(userID: string | ObjectId): Promise<IUser | boolean> {
@@ -74,15 +83,17 @@ export class AuthService {
   }
 
 
-  async logout(token: string): Promise<boolean> {
-    if(!CheckToken(token)){
+  async logout(token: string, accessToken: string): Promise<boolean> {
+    if(!CheckToken(token) || !CheckToken(accessToken)){
       return false;
     }
+    const decode = await jwtService.getUserByToken(accessToken);
     const validToken = await tokenRepository.checkFromBlackList(token);
     if(!validToken){
       return false;
     }
     await tokenRepository.addToBlackList(token);
+    await sessionRepository.deleteOne(decode.deviceId);
     return true;
   }
   async resendEmail(email: string) {
@@ -102,8 +113,8 @@ export class AuthService {
   }
 }
 
-const _generateTokens = async(id: string): Promise<ITokenResponse> =>{
+const _generateTokens = async(id: string, deviceId?: string): Promise<ITokenResponse> =>{
   const accessToken = await jwtService.generateJwt(id, '10s');
-  const refreshToken = await jwtService.generateJwt(id, '20s');
+  const refreshToken = await jwtService.generateJwt(id,  '20m', deviceId ? deviceId : undefined);
   return { accessToken: accessToken, refreshToken: refreshToken }
 }

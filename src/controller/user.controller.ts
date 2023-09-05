@@ -4,6 +4,7 @@ import {IPaginationResponse} from "../types/pagination-response.interface";
 import {IUser} from "../types/user.types";
 import {CreateUserValidator} from "./validator/create-user.validator";
 import {InputValidationMiddleware} from "../middleware/inputValidationMiddleware";
+import * as os from "os";
 
 const router = express.Router();
 const service = new UserService();

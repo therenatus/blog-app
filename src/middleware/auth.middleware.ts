@@ -1,13 +1,13 @@
 import {NextFunction, Request, Response} from "express";
 import {JwtService} from "../helpers/jwtService";
 
-const jwtService = new JwtService()
+const jwtService = new JwtService();
 
 export const AuthMiddleware = async(req: Request, res: Response, next: NextFunction) => {
   const auth = req.headers.authorization;
   if(!auth){
-    res.status(401).send("forbiden 2");
-    return ;
+    res.status(401).send("Forbidden 2");
+    return;
   }
   const token = auth.split(' ')[1];
   if(!token){
