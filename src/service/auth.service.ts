@@ -29,20 +29,21 @@ export class AuthService {
     if (!user) {
       return false;
     }
-    const usedIp = await sessionRepository.getSessionById(ip);
-    if (usedIp) {
-      await sessionRepository.updateByIP(deviceId, ip, userAgent);
-    } else {
-      const session = await sessionRepository.login({
-        deviceId,
-        ip,
-        title: userAgent,
-        lastActiveDate: new Date(),
-        userId: user.accountData.id,
-      });
-      if (!session) {
-        return false;
-      }
+    // const usedIp = await sessionRepository.getSessionById(ip);
+    // if (usedIp) {
+    //   await sessionRepository.updateByIP(deviceId, ip, userAgent);
+    // } else {
+    //
+    // }
+    const session = await sessionRepository.login({
+      deviceId,
+      ip,
+      title: userAgent,
+      lastActiveDate: new Date(),
+      userId: user.accountData.id,
+    });
+    if (!session) {
+      return false;
     }
     const validPassword = await compare(
       body.password,
