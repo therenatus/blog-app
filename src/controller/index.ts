@@ -18,6 +18,6 @@ router.use(RoutePath.users, BasicAuthMiddleware, UserController);
 router.use(RoutePath.auth, authController);
 router.use(RoutePath.comments, commentController);
 router.use("/testing", testController);
-router.use(RoutePath.security, AuthMiddleware, securityController);
+router.use(RoutePath.security, securityController);
 
 export default router;

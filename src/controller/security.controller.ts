@@ -3,16 +3,23 @@ import { SecurityService } from "../service/security.service";
 import { ISession } from "../types/session.interface";
 import { WithId } from "mongodb";
 import { StatusEnum } from "../types/status.enum";
+import { AuthMiddleware } from "../middleware/auth.middleware";
 
 const router = express.Router();
 const service = new SecurityService();
 
-router.get("/", async (_: Request, res: Response) => {
-  const devices: WithId<ISession>[] = await service.getAll();
+router.get("/", async (req: Request, res: Response) => {
+  let devices: WithId<ISession>[];
+  if (req.headers.authorization) {
+    devices = await service.getAll();
+  } else {
+    devices = [];
+  }
+
   res.status(200).send(devices);
 });
 
-router.delete("/", async (req: Request, res: Response) => {
+router.delete("/", AuthMiddleware, async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
   if (!refreshToken) {
     return res.status(401).send();
@@ -24,7 +31,7 @@ router.delete("/", async (req: Request, res: Response) => {
   res.status(204).send();
 });
 
-router.delete("/:id", async (req: Request, res: Response) => {
+router.delete("/:id", AuthMiddleware, async (req: Request, res: Response) => {
   if (!req.params.id) {
     res.sendStatus(404);
   }
