@@ -8,6 +8,7 @@ import commentController from "./comment.controller";
 import authController from "./auth.controller";
 import securityController from "./security.controller";
 import { RoutePath } from "./route.path";
+import { AuthMiddleware } from "../middleware/auth.middleware";
 
 const router = express.Router();
 
@@ -17,6 +18,6 @@ router.use(RoutePath.users, BasicAuthMiddleware, UserController);
 router.use(RoutePath.auth, authController);
 router.use(RoutePath.comments, commentController);
 router.use("/testing", testController);
-router.use(RoutePath.security, securityController);
+router.use(RoutePath.security, AuthMiddleware, securityController);
 
 export default router;
