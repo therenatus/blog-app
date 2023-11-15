@@ -8,14 +8,8 @@ import { AuthMiddleware } from "../middleware/auth.middleware";
 const router = express.Router();
 const service = new SecurityService();
 
-router.get("/", async (req: Request, res: Response) => {
-  let devices: WithId<ISession>[];
-  if (req.headers.authorization) {
-    devices = await service.getAll();
-  } else {
-    devices = [];
-  }
-
+router.get("/", async (_: Request, res: Response) => {
+  const devices: WithId<ISession>[] = await service.getAll();
   res.status(200).send(devices);
 });
 
