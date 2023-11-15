@@ -39,11 +39,10 @@ router.post(
 );
 
 router.post("/refresh-token", async (req: Request, res: Response) => {
-  const refreshToken = req.cookies.refreshToken;
-  if (!refreshToken) {
+  if (!req.cookies.refreshToken) {
     return res.sendStatus(StatusEnum.UNAUTHORIZED);
   }
-  const data = await service.refreshToken(refreshToken);
+  const data = await service.refreshToken(req.cookies.refreshToken);
   if (!data) {
     return res.sendStatus(StatusEnum.UNAUTHORIZED);
   }

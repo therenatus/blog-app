@@ -115,7 +115,6 @@ router.get("/:id/comments", async (req: Request, res: Response) => {
   if (!req.params.id) {
     return res.status(404).send();
   }
-
   const comment = await CommentQueryRepository({
     query: req.query,
     postId: req.params.id,

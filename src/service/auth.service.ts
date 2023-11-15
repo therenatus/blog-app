@@ -11,6 +11,7 @@ import { JwtService } from "../helpers/jwtService";
 import { CheckToken } from "../helpers/check-token";
 import { TokenRepository } from "../repositories/token.repository";
 import { SessionRepository } from "../repositories/session.repository";
+import { sessionCollection } from "../index";
 
 const Repository = new UserRepository();
 const emailManager = new EmailManagers();
@@ -28,15 +29,20 @@ export class AuthService {
     if (!user) {
       return false;
     }
-    const session = await sessionRepository.login({
-      deviceId,
-      ip,
-      title: userAgent,
-      lastActiveDate: new Date(),
-      userId: user.accountData.id,
-    });
-    if (!session) {
-      return false;
+    const usedIp = await sessionRepository.getSessionById(ip);
+    if (usedIp) {
+      await sessionRepository.updateByIP(deviceId, ip, userAgent);
+    } else {
+      const session = await sessionRepository.login({
+        deviceId,
+        ip,
+        title: userAgent,
+        lastActiveDate: new Date(),
+        userId: user.accountData.id,
+      });
+      if (!session) {
+        return false;
+      }
     }
     const validPassword = await compare(
       body.password,
@@ -55,7 +61,7 @@ export class AuthService {
     if (!id || !validToken) {
       return null;
     }
-    await sessionRepository.updateLastActive(d.deviceId, new Date());
+    await sessionRepository.updateLastActive(d.deviceId);
     await tokenRepository.addToBlackList(token);
     return await _generateTokens(id, d.deviceId);
   }
