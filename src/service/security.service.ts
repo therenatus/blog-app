@@ -17,11 +17,14 @@ export class SecurityService {
     userId: string | null,
   ): Promise<StatusEnum> {
     const data = await repository.findOne(deviceId);
-    if (userId && data?.userId === userId) {
-      const deleted = await repository.deleteOne(deviceId);
-      return deleted ? StatusEnum.NOT_CONTENT : StatusEnum.NOT_FOUND;
+    if (!data) {
+      return StatusEnum.NOT_FOUND;
     }
-    return StatusEnum.FORBIDDEN;
+    if (data.userId !== userId) {
+      return StatusEnum.FORBIDDEN;
+    }
+    const deleted = await repository.deleteOne(deviceId);
+    return deleted ? StatusEnum.NOT_CONTENT : StatusEnum.NOT_FOUND;
   }
 
   async deleteAll(token: string): Promise<boolean> {

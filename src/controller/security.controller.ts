@@ -33,8 +33,8 @@ router.delete("/:id", AuthMiddleware, async (req: Request, res: Response) => {
   if (session === StatusEnum.NOT_FOUND) {
     return res.sendStatus(StatusEnum.NOT_FOUND);
   }
-  if (session === StatusEnum.UNAUTHORIZED) {
-    return res.sendStatus(StatusEnum.UNAUTHORIZED);
+  if (session === StatusEnum.FORBIDDEN) {
+    return res.sendStatus(StatusEnum.FORBIDDEN);
   }
   res.status(204).send();
 });
