@@ -16,7 +16,7 @@ router.get("/", async (_: Request, res: Response) => {
 router.delete("/", AuthMiddleware, async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
   if (!refreshToken) {
-    return res.status(401).send();
+    return res.status(403).send();
   }
   const session = await service.deleteAll(refreshToken);
   if (!session) {
@@ -27,7 +27,7 @@ router.delete("/", AuthMiddleware, async (req: Request, res: Response) => {
 
 router.delete("/:id", AuthMiddleware, async (req: Request, res: Response) => {
   if (!req.params.id) {
-    res.sendStatus(404);
+    res.sendStatus(StatusEnum.NOT_FOUND);
   }
   const session = await service.deleteOne(req.params.id, req.userId);
   if (session === StatusEnum.NOT_FOUND) {

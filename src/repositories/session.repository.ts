@@ -36,8 +36,8 @@ export class SessionRepository {
     return deletedCount !== 0;
   }
 
-  async findOne(data: any): Promise<ISession | null> {
-    return await sessionCollection.findOne(data);
+  async findOne(deviceId: string): Promise<ISession | null> {
+    return await sessionCollection.findOne({ deviceId });
   }
 
   async updateByIP(deviceId: string, ip: string, userAgent: string) {
