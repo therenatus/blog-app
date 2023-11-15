@@ -1,3 +1,3 @@
-export interface ICreateCommentDto {
-    content: string
+export interface CreateCommentDto {
+  content: string;
 }

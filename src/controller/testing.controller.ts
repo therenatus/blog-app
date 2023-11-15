@@ -1,5 +1,5 @@
 import express from "express";
-import { Test } from "../service/blog.spec";
+import { Test } from "../service/testing.service";
 
 const router = express.Router();
 const service = new Test();

@@ -8,6 +8,11 @@ export interface IUser {
   hashPassword: string;
 }
 
+export interface ILogin {
+  loginOrEmail: string,
+  password: string
+}
+
 type emailConfirmation = {
   confirmationCode: string,
   expirationDate: Date,

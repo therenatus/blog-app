@@ -1,49 +1,58 @@
-import {ICommentResponse} from "../types/comment.interface";
-import {CommentUserMapping} from "../helpers/comment-user-mapping";
-import {CommentRepository} from "../repositories/comment.repository";
-import {UserRepository} from "../repositories/user.repository";
-import {StatusEnum} from "../types/status.enum";
-import {PostRepository} from "../repositories/post.repository";
+import { IComment, ICommentResponse } from "../types/comment.interface";
+import { CommentUserMapping } from "../helpers/comment-user-mapping";
+import { CommentRepository } from "../repositories/comment.repository";
+import { UserRepository } from "../repositories/user.repository";
+import { StatusEnum } from "../types/status.enum";
+import { PostRepository } from "../repositories/post.repository";
+import { CreateCommentDto } from "../controller/dto/create-comment.dto";
 
 const commentRepository = new CommentRepository();
 const userRepository = new UserRepository();
 const postRepository = new PostRepository();
 
 export class CommentService {
-  async  createComment(postId: string, body: any, userId: string): Promise<ICommentResponse | boolean> {
+  async createComment(
+    postId: string,
+    body: CreateCommentDto,
+    userId: string,
+  ): Promise<ICommentResponse | boolean> {
     const post = await postRepository.findOne(postId);
-    if(!post){
+    if (!post) {
       return false;
     }
     const author = await userRepository.findOneById(userId);
-    if(!author){
+    if (!author) {
       return false;
     }
-    body.id = (+new Date).toString();
-    body.createdAt = new Date;
-    body.postId = postId;
-    body.commentatorId = userId;
-    const comment = await commentRepository.create(body);
-    if(!comment){
+    const newComment: IComment = {
+      ...body,
+      id: (+new Date()).toString(),
+      createdAt: new Date(),
+      postId: postId,
+      commentatorId: userId,
+    };
+
+    const comment = await commentRepository.create(newComment);
+    if (!comment) {
       return false;
     }
     const commentWithUser = CommentUserMapping(comment, author);
-    if(!commentWithUser){
+    if (!commentWithUser) {
       return false;
     }
     return commentWithUser;
   }
 
-  async update(body: any, id: string, userId: string): Promise<StatusEnum>{
+  async update(body: any, id: string, userId: string): Promise<StatusEnum> {
     const comment = await commentRepository.findOne(id);
-    if(!comment){
+    if (!comment) {
       return StatusEnum.NOT_FOUND;
     }
-    if(comment.commentatorId !== userId){
+    if (comment.commentatorId !== userId) {
       return StatusEnum.FORBIDDEN;
     }
     const newComment = await commentRepository.update(id, body);
-    if(!newComment){
+    if (!newComment) {
       return StatusEnum.NOT_FOUND;
     }
     return StatusEnum.NOT_CONTENT;
@@ -51,11 +60,11 @@ export class CommentService {
 
   async getOne(id: string): Promise<ICommentResponse | StatusEnum> {
     const comment = await commentRepository.findOne(id);
-    if(comment === null){
+    if (comment === null) {
       return StatusEnum.NOT_FOUND;
     }
     const user = await userRepository.findOneById(comment.commentatorId);
-    if(user === null){
+    if (user === null) {
       return StatusEnum.NOT_FOUND;
     }
     const commentWithUser = CommentUserMapping(comment, user);
@@ -64,14 +73,14 @@ export class CommentService {
 
   async deleteOne(id: string, userId: string): Promise<StatusEnum> {
     const comment = await commentRepository.findOne(id);
-    if(comment === null){
+    if (comment === null) {
       return StatusEnum.NOT_FOUND;
     }
-    if(comment.commentatorId !== userId){
+    if (comment.commentatorId !== userId) {
       return StatusEnum.FORBIDDEN;
     }
     const deletedComment = await commentRepository.deleteComment(id);
-    if(!deletedComment){
+    if (!deletedComment) {
       return StatusEnum.NOT_FOUND;
     }
     return StatusEnum.NOT_CONTENT;
