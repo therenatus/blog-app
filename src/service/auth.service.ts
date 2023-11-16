@@ -135,7 +135,7 @@ const _generateTokens = async (
   id: string,
   deviceId?: string,
 ): Promise<ITokenResponse> => {
-  const accessToken = await jwtService.generateJwt(id, "10s");
+  const accessToken = await jwtService.generateJwt(id, "30s");
   const refreshToken = await jwtService.generateJwt(
     id,
     "20m",

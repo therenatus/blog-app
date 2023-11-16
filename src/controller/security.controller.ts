@@ -13,7 +13,7 @@ router.get("/", async (_: Request, res: Response) => {
   res.status(200).send(devices);
 });
 
-router.delete("/", AuthMiddleware, async (req: Request, res: Response) => {
+router.delete("/", async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
   if (!refreshToken) {
     return res.status(403).send();
@@ -25,7 +25,11 @@ router.delete("/", AuthMiddleware, async (req: Request, res: Response) => {
   res.status(204).send();
 });
 
-router.delete("/:id", AuthMiddleware, async (req: Request, res: Response) => {
+router.delete("/:id", async (req: Request, res: Response) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) {
+    return res.sendStatus(StatusEnum.FORBIDDEN);
+  }
   if (!req.params.id) {
     res.sendStatus(StatusEnum.NOT_FOUND);
   }
@@ -34,7 +38,7 @@ router.delete("/:id", AuthMiddleware, async (req: Request, res: Response) => {
     return res.sendStatus(StatusEnum.NOT_FOUND);
   }
   if (session === StatusEnum.FORBIDDEN) {
-    return res.sendStatus(StatusEnum.FORBIDDEN);
+    return res.status(StatusEnum.FORBIDDEN).send("ddd");
   }
   res.status(204).send();
 });
