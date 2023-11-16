@@ -17,9 +17,9 @@ export class SessionRepository {
     return true;
   }
 
-  async getAll(): Promise<WithId<ISession>[]> {
+  async getAll(userId: string): Promise<WithId<ISession>[]> {
     return await sessionCollection
-      .find({}, { projection: { _id: 0, userId: 0 } })
+      .find({ userId }, { projection: { _id: 0, userId: 0 } })
       .toArray();
   }
 

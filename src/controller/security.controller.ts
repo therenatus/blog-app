@@ -3,13 +3,16 @@ import { SecurityService } from "../service/security.service";
 import { ISession } from "../types/session.interface";
 import { WithId } from "mongodb";
 import { StatusEnum } from "../types/status.enum";
-import { AuthMiddleware } from "../middleware/auth.middleware";
 
 const router = express.Router();
 const service = new SecurityService();
 
-router.get("/", async (_: Request, res: Response) => {
-  const devices: WithId<ISession>[] = await service.getAll();
+router.get("/", async (req: Request, res: Response) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) {
+    return res.status(401).send();
+  }
+  const devices: WithId<ISession>[] = await service.getAll(refreshToken);
   res.status(200).send(devices);
 });
 

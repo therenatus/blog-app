@@ -8,8 +8,9 @@ const repository = new SessionRepository();
 const jwtService = new JwtService();
 
 export class SecurityService {
-  async getAll(): Promise<WithId<ISession>[]> {
-    return await repository.getAll();
+  async getAll(token: string): Promise<WithId<ISession>[]> {
+    const decode = await jwtService.getUserByToken(token);
+    return await repository.getAll(decode.id);
   }
 
   async deleteOne(
