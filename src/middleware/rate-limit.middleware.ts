@@ -20,7 +20,7 @@ export const RateLimitMiddleware = async (
   const ips = await ipCollection
     .find({ date: { $gt: tenSecondsAgo }, URL: url, IP: ip })
     .toArray();
-  if (ips.length > 5) {
+  if (ips.length > 4) {
     return res.status(429).send();
   }
   next();
