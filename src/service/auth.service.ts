@@ -12,6 +12,7 @@ import { CheckToken } from "../helpers/check-token";
 import { TokenRepository } from "../repositories/token.repository";
 import { SessionRepository } from "../repositories/session.repository";
 import { sessionCollection } from "../index";
+import { StatusEnum } from "../types/status.enum";
 
 const Repository = new UserRepository();
 const emailManager = new EmailManagers();
@@ -57,14 +58,17 @@ export class AuthService {
 
   async refreshToken(token: string): Promise<ITokenResponse | null> {
     const id = CheckToken(token);
-    const d = await jwtService.getUserByToken(token);
+    const decode = await jwtService.getUserByToken(token);
     const validToken = await tokenRepository.checkFromBlackList(token);
     if (!id || !validToken) {
       return null;
     }
-    await sessionRepository.updateLastActive(d.deviceId);
+    const isUpdate = await sessionRepository.updateLastActive(decode.deviceId);
+    if (!isUpdate) {
+      return null;
+    }
     await tokenRepository.addToBlackList(token);
-    return await _generateTokens(id, d.deviceId);
+    return await _generateTokens(id, decode.deviceId);
   }
 
   async getMe(userID: string | ObjectId): Promise<IUser | boolean> {
@@ -101,11 +105,11 @@ export class AuthService {
     return createResult;
   }
 
-  async logout(token: string, accessToken: string): Promise<boolean> {
-    if (!CheckToken(token) && !CheckToken(accessToken)) {
+  async logout(token: string): Promise<boolean> {
+    if (!CheckToken(token)) {
       return false;
     }
-    const decode = await jwtService.getUserByToken(accessToken);
+    const decode = await jwtService.getUserByToken(token);
     const validToken = await tokenRepository.checkFromBlackList(token);
     if (!validToken) {
       return false;

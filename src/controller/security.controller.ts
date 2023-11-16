@@ -31,7 +31,7 @@ router.delete("/", async (req: Request, res: Response) => {
 router.delete("/:id", async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
   if (!refreshToken) {
-    return res.sendStatus(StatusEnum.FORBIDDEN);
+    return res.sendStatus(StatusEnum.UNAUTHORIZED);
   }
   if (!req.params.id) {
     res.sendStatus(StatusEnum.NOT_FOUND);

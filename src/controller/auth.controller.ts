@@ -55,11 +55,11 @@ router.post("/refresh-token", async (req: Request, res: Response) => {
 
 router.post("/logout", async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
-  const accessToken = req.cookies.accessToken;
-  if (!accessToken) {
+  // const accessToken = req.cookies.accessToken;
+  if (!refreshToken) {
     return res.sendStatus(StatusEnum.UNAUTHORIZED);
   }
-  const data = await service.logout(refreshToken, accessToken);
+  const data = await service.logout(refreshToken);
   if (!data) {
     return res.sendStatus(StatusEnum.UNAUTHORIZED);
   }

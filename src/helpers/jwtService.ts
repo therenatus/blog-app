@@ -13,11 +13,8 @@ export class JwtService {
   }
 
   async getUserByToken(token: string) {
-    console.log("token", token);
     try {
       const result: any = jwt.verify(token, secret);
-      console.log(secret);
-      console.log("result", result);
       return result;
     } catch {
       return null;
