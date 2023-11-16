@@ -97,9 +97,9 @@ router.post(
 
 router.post(
   "/registration-confirmation",
+  RateLimitMiddleware,
   CheckCodeValidator,
   InputValidationMiddleware,
-  RateLimitMiddleware,
   async (req: RequestType<any, { code: string }>, res: Response) => {
     const isConfirm = service.confirmUser(req.body.code);
     if (!isConfirm) {
