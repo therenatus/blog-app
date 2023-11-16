@@ -16,9 +16,9 @@ const service = new AuthService();
 
 router.post(
   "/login",
+  RateLimitMiddleware,
   LoginValidator,
   InputValidationMiddleware,
-  RateLimitMiddleware,
   async (req: RequestType<any, ILogin>, res: Response) => {
     const data = await service.login(
       req.body,
@@ -86,9 +86,9 @@ router.get("/me", AuthMiddleware, async (req: Request, res: Response) => {
 
 router.post(
   "/registration",
+  RateLimitMiddleware,
   CreateUserValidator,
   InputValidationMiddleware,
-  RateLimitMiddleware,
   async (req: RequestType<any, IRegistration>, res: Response) => {
     await service.registration(req.body);
     return res.sendStatus(StatusEnum.NOT_CONTENT);
@@ -111,9 +111,9 @@ router.post(
 
 router.post(
   "/registration-email-resending",
+  RateLimitMiddleware,
   FindCheckEmailValidator,
   InputValidationMiddleware,
-  RateLimitMiddleware,
   async (req: RequestType<any, { email: string }>, res: Response) => {
     const isConfirm = service.resendEmail(req.body.email);
     if (!isConfirm) {
