@@ -13,15 +13,13 @@ export class SecurityService {
     return await repository.getAll(decode.id);
   }
 
-  async deleteOne(
-    deviceId: string,
-    userId: string | null,
-  ): Promise<StatusEnum> {
+  async deleteOne(deviceId: string, token: string): Promise<StatusEnum> {
     const data = await repository.findOne(deviceId);
     if (!data) {
       return StatusEnum.NOT_FOUND;
     }
-    if (data.userId !== userId) {
+    const decode = await jwtService.getUserByToken(token);
+    if (data.userId != decode.id) {
       return StatusEnum.FORBIDDEN;
     }
     const deleted = await repository.deleteOne(deviceId);
