@@ -63,10 +63,11 @@ export class AuthService {
     if (!id || !validToken) {
       return null;
     }
-    const isUpdate = await sessionRepository.updateLastActive(decode.deviceId);
-    if (!isUpdate) {
+    const isCanRefresh = await sessionRepository.findOne(decode.deviceId);
+    if (!isCanRefresh) {
       return null;
     }
+    await sessionRepository.updateLastActive(decode.deviceId);
     await tokenRepository.addToBlackList(token);
     return await _generateTokens(id, decode.deviceId);
   }
