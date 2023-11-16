@@ -115,6 +115,10 @@ export class AuthService {
     if (!validToken) {
       return false;
     }
+    const isCanLogout = await sessionRepository.findOne(decode.deviceId);
+    if (!isCanLogout) {
+      return false;
+    }
     await tokenRepository.addToBlackList(token);
     await sessionRepository.deleteOne(decode.deviceId);
     return true;
