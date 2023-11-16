@@ -16,7 +16,7 @@ router.get("/", async (_: Request, res: Response) => {
 router.delete("/", async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
   if (!refreshToken) {
-    return res.status(403).send();
+    return res.status(401).send();
   }
   const session = await service.deleteAll(refreshToken);
   if (!session) {

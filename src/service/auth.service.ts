@@ -102,7 +102,7 @@ export class AuthService {
   }
 
   async logout(token: string, accessToken: string): Promise<boolean> {
-    if (!CheckToken(token) || !CheckToken(accessToken)) {
+    if (!CheckToken(token) && !CheckToken(accessToken)) {
       return false;
     }
     const decode = await jwtService.getUserByToken(accessToken);
