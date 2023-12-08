@@ -36,7 +36,7 @@ export class CommentService {
     if (!comment) {
       return false;
     }
-    const commentWithUser = CommentUserMapping(comment, author);
+    const commentWithUser = CommentUserMapping(newComment, author);
     if (!commentWithUser) {
       return false;
     }
@@ -67,8 +67,7 @@ export class CommentService {
     if (user === null) {
       return StatusEnum.NOT_FOUND;
     }
-    const commentWithUser = CommentUserMapping(comment, user);
-    return commentWithUser;
+    return CommentUserMapping(comment, user);
   }
 
   async deleteOne(id: string, userId: string): Promise<StatusEnum> {

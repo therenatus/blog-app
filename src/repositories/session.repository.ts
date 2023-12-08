@@ -1,35 +1,28 @@
-import { ISession, SessionResponseType } from "../types/session.interface";
-import { sessionCollection } from "../index";
-import { ObjectId, WithId } from "mongodb";
-import { da } from "date-fns/locale";
+import { ISession } from "../types/session.interface";
+import { WithId } from "mongodb";
+import { SessionModel } from "../model/session.model";
 
 export class SessionRepository {
-  async login(data: ISession): Promise<ObjectId> {
-    const { insertedId } = await sessionCollection.insertOne(data);
-    return insertedId;
+  async login(data: ISession): Promise<ISession | null> {
+    return SessionModel.create(data);
   }
 
   async getSessionById(ip: string): Promise<boolean> {
-    const session = await sessionCollection.findOne({ ip });
-    if (!session) {
-      return false;
-    }
-    return true;
+    const session = await SessionModel.findOne({ ip });
+    return !session;
   }
 
   async getAll(userId: string): Promise<WithId<ISession>[]> {
-    return await sessionCollection
-      .find({ userId }, { projection: { _id: 0, userId: 0 } })
-      .toArray();
+    return await SessionModel.find({ userId }, { _id: 0, userId: 0 }).exec();
   }
 
   async deleteOne(deviceId: string): Promise<boolean> {
-    const { deletedCount } = await sessionCollection.deleteOne({ deviceId });
+    const { deletedCount } = await SessionModel.deleteOne({ deviceId });
     return deletedCount !== 0;
   }
 
   async deleteAll(data: any): Promise<boolean> {
-    const { deletedCount } = await sessionCollection.deleteMany({
+    const { deletedCount } = await SessionModel.deleteMany({
       userId: data.id,
       deviceId: { $ne: data.deviceId },
     });
@@ -37,21 +30,20 @@ export class SessionRepository {
   }
 
   async findOne(deviceId: string): Promise<ISession | null> {
-    return await sessionCollection.findOne({ deviceId });
+    return SessionModel.findOne({ deviceId });
   }
 
   async updateByIP(deviceId: string, ip: string, userAgent: string) {
-    const { acknowledged } = await sessionCollection.updateOne(
+    return SessionModel.findOneAndUpdate(
       { ip },
       { $set: { deviceId, lastActiveDate: new Date(), title: userAgent } },
     );
-    return acknowledged;
   }
-  async updateLastActive(deviceId: string) {
-    const { acknowledged } = await sessionCollection.updateOne(
+
+  async updateLastActive(deviceId: string): Promise<void> {
+    await SessionModel.updateOne(
       { deviceId },
       { $set: { lastActiveDate: new Date() } },
     );
-    return acknowledged;
   }
 }

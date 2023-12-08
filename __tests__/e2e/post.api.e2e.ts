@@ -9,6 +9,7 @@ import { CreateBlogDto } from "../../src/controller/dto/create-blog.dto";
 import { StatusEnum } from "../../src/types/status.enum";
 import { IPost } from "../../src/types/post.interface";
 import { IBlog } from "../../src/types/blog.interface";
+import mongoose from "mongoose";
 
 const manager = new PostTestManager();
 const authManager = new AuthTestManager();
@@ -45,8 +46,10 @@ describe("/api/posts test post api", () => {
   let blog: IBlog;
   beforeAll(async () => {
     token = authManager.basicLogin();
-    await getRequest().delete(`/api/${RoutePath.test}`);
+    await getRequest().delete(`/api${RoutePath.test}`);
   });
+
+  afterAll(async () => mongoose.disconnect());
 
   it("should return 201 and new post entity", async () => {
     const responseBlog = await blogManager.createBlog(

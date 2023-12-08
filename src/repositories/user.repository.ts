@@ -1,19 +1,14 @@
 import { IQuery } from "../types/query.interface";
-import { FindAllWithCount } from "../helpers/findAllWithCount";
-import { userCollection } from "../index";
 import { IUser, UserDBType } from "../types/user.types";
 import { TResponseWithData } from "../types/respone-with-data.type";
 import { ObjectId, WithId } from "mongodb";
+import { UserModel } from "../model/user.model";
 
 export class UserRepository {
   async getAll(
     query: IQuery,
   ): Promise<TResponseWithData<IUser[], number, "data", "totalCount">> {
-    const users = await FindAllWithCount<UserDBType>(
-      query,
-      userCollection,
-      null,
-    );
+    const users = await FindAllUsers(query);
     const totalCount = users.totalCount;
     const userMap = users.data.map((user) => {
       return user.accountData;
@@ -23,22 +18,19 @@ export class UserRepository {
   }
 
   async getOne(search: string): Promise<UserDBType | null> {
-    return userCollection.findOne(
-      {
-        $or: [{ "accountData.email": search }, { "accountData.login": search }],
-      },
-      { projection: { hashPassword: 0 } },
-    );
+    return UserModel.findOne({
+      $or: [{ "accountData.email": search }, { "accountData.login": search }],
+    });
   }
 
   async getOneByCode(code: string): Promise<UserDBType | null> {
-    return userCollection.findOne({
+    return UserModel.findOne({
       "emailConfirmation.confirmationCode": code,
     });
   }
 
   async getOneByEmail(email: string): Promise<UserDBType | null> {
-    return userCollection.findOne({ "accountData.email": email });
+    return UserModel.findOne({ "accountData.email": email });
   }
 
   async findOneById(id: ObjectId | string): Promise<UserDBType | null> {
@@ -50,44 +42,85 @@ export class UserRepository {
     if (!ObjectId.isValid(id)) {
       filter = { "accountData.id": id };
     }
-    return await userCollection.findOne(filter, {
-      projection: { _id: 0, "accountData.hashPassword": 0 },
+    return UserModel.findOne(filter, {
+      _id: 0,
     });
   }
-  async create(body: UserDBType): Promise<ObjectId> {
-    const { insertedId } = await userCollection.insertOne(body);
-    return insertedId;
+  async create(body: UserDBType): Promise<UserDBType | null> {
+    const user = await UserModel.create(body);
+    return UserModel.findById(user._id, {
+      "accountData.hashPassword": 0,
+    }).exec();
   }
 
   async delete(id: string): Promise<any> {
-    const { deletedCount } = await userCollection.deleteOne({
+    const { deletedCount } = await UserModel.deleteOne({
       "accountData.id": id,
     });
-    if (deletedCount === 0) {
-      return false;
-    }
-    return true;
+    return deletedCount !== 0;
   }
 
   async confirmUser(id: string): Promise<boolean> {
-    const { matchedCount } = await userCollection.updateOne(
+    const { matchedCount } = await UserModel.updateOne(
       { "accountData.id": id },
       { $set: { "emailConfirmation.isConfirmed": true } },
     );
-    if (matchedCount === 0) {
-      return false;
-    }
-    return true;
+    return matchedCount !== 0;
   }
 
   async updateCode(id: string, code: string): Promise<boolean> {
-    const { matchedCount } = await userCollection.updateOne(
+    const { matchedCount } = await UserModel.updateOne(
       { "accountData.id": id },
       { $set: { "emailConfirmation.confirmationCode": code } },
     );
-    if (matchedCount === 0) {
-      return false;
-    }
-    return true;
+    return matchedCount !== 0;
   }
+}
+
+async function FindAllUsers(
+  query: IQuery,
+): Promise<
+  TResponseWithData<WithId<UserDBType>[], number, "data", "totalCount">
+> {
+  const {
+    searchNameTerm,
+    sortDirection,
+    pageSize,
+    pageNumber,
+    sortBy,
+    searchEmailTerm,
+    searchLoginTerm,
+  } = query;
+  let filter: any = {};
+  const sortOptions: { [key: string]: any } = {};
+  sortOptions[sortBy as string] = sortDirection;
+  const orConditions = [];
+
+  if (searchNameTerm) {
+    filter = { "accountData.name": { $regex: searchNameTerm, $options: "i" } };
+  }
+
+  if (searchEmailTerm) {
+    orConditions.push({
+      "accountData.email": { $regex: searchEmailTerm, $options: "i" },
+    });
+  }
+
+  if (searchLoginTerm) {
+    orConditions.push({
+      "accountData.login": { $regex: searchLoginTerm, $options: "i" },
+    });
+  }
+
+  if (orConditions.length > 0) {
+    filter.$or = orConditions;
+  }
+  const total = await UserModel.countDocuments(filter).exec();
+  const data = await UserModel.find(filter, { "accountData.hashPassword": 0 })
+    .sort(sortOptions)
+    .skip(+pageSize * (pageNumber - 1))
+    .limit(+pageSize)
+    .exec();
+
+  return { data: data, totalCount: total };
 }

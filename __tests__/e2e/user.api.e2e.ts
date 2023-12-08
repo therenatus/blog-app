@@ -6,7 +6,6 @@ import { UserTestManager } from "../utils/userTestManager";
 import { StatusEnum } from "../../src/types/status.enum";
 import { IUser } from "../../src/types/user.types";
 import { AuthTestManager } from "../utils/authTestManager";
-import DoneCallback = jest.DoneCallback;
 
 const getRequest = () => {
   return request(app);
@@ -30,7 +29,7 @@ const users: CreateUserDto[] = [
 describe("test api for user", () => {
   let createdUsers: IUser[] = [];
   beforeAll(async () => {
-    await getRequest().delete(`/api${RoutePath.test}`);
+    await getRequest().delete(`/api/${RoutePath.test}`);
   });
 
   it("should return 201 and new user", async () => {

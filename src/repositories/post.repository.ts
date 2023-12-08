@@ -1,15 +1,14 @@
-import { postCollection } from "../index";
 import { IQuery } from "../types/query.interface";
 import { TResponseWithData } from "../types/respone-with-data.type";
-import { FindAllWithCount } from "../helpers/findAllWithCount";
-import { ICreatePost, IPost } from "../types/post.interface";
+import { IPost } from "../types/post.interface";
 import { ObjectId, WithId } from "mongodb";
+import { PostModel } from "../model/post.model";
 
 export class PostRepository {
   async find(
     query: IQuery,
   ): Promise<TResponseWithData<WithId<IPost>[], number, "data", "totalCount">> {
-    return await FindAllWithCount<IPost>(query, postCollection, null);
+    return await postPagination(query);
   }
 
   async findOne(id: string | ObjectId): Promise<IPost | null> {
@@ -17,34 +16,44 @@ export class PostRepository {
     ObjectId.isValid(id)
       ? (findBy = { _id: new ObjectId(id) })
       : (findBy = { id });
-    return await postCollection.findOne(findBy, { projection: { _id: 0 } });
+    return PostModel.findOne(findBy, { _id: 0 });
   }
 
   async create(body: IPost): Promise<IPost | null> {
-    const { insertedId } = await postCollection.insertOne(body);
-    return await postCollection.findOne(
-      { _id: insertedId },
-      { projection: { _id: 0 } },
-    );
+    return PostModel.create(body);
   }
 
   async update(id: string, body: any): Promise<IPost | boolean> {
-    const res = await postCollection.findOneAndUpdate(
-      { id },
-      { $set: body },
-      { returnDocument: "after" },
-    );
-    if (!res.ok) {
+    const res = await PostModel.findOneAndUpdate({ id }, { body });
+    if (!res) {
       return false;
     }
-    return res.value as IPost;
+    return res;
   }
 
   async delete(id: string): Promise<boolean> {
-    const { deletedCount } = await postCollection.deleteOne({ id });
-    if (deletedCount === 0) {
-      return false;
-    }
-    return true;
+    const { deletedCount } = await PostModel.deleteOne({ id });
+    return deletedCount !== 0;
   }
+}
+
+export async function postPagination(
+  query: IQuery,
+): Promise<TResponseWithData<WithId<IPost>[], number, "data", "totalCount">> {
+  const { sortDirection, pageSize, pageNumber, sortBy } = query;
+  let filter: any = {};
+  const sortOptions: { [key: string]: any } = {};
+  sortOptions[sortBy as string] = sortDirection;
+
+  const total = await PostModel.find(filter).countDocuments();
+  const data = await PostModel.find(filter, {
+    _id: 0,
+    __v: 0,
+  })
+    .sort(sortOptions)
+    .skip(+pageSize * (pageNumber - 1))
+    .limit(+pageSize)
+    .exec();
+
+  return { data: data, totalCount: total };
 }

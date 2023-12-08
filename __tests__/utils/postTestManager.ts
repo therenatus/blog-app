@@ -33,14 +33,12 @@ export class PostTestManager {
     const response = await getRequest()
       .get(`/api/${RoutePath.posts}`)
       .expect(StatusEnum.SUCCESS);
-    console.log(response.body);
     if (response.status === StatusEnum.SUCCESS) {
       this._checkResponsesData(response.body);
     }
   }
 
   async getPostById(id: string, expectedStatusCode: StatusEnum) {
-    console.log(id);
     const response = await getRequest()
       .get(`/api/${RoutePath.posts}/${id}`)
       .expect(expectedStatusCode);
@@ -51,7 +49,7 @@ export class PostTestManager {
   }
 
   async deletePost(id: string, token: string, expectedStatusCode: StatusEnum) {
-    const a = await getRequest()
+    await getRequest()
       .delete(`/api/${RoutePath.posts}/${id}`)
       .set("Authorization", token)
       .expect(expectedStatusCode);

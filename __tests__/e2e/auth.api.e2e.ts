@@ -4,8 +4,6 @@ import { app } from "../../src";
 import { AuthTestManager } from "../utils/authTestManager";
 import { StatusEnum } from "../../src/types/status.enum";
 import { UserTestManager } from "../utils/userTestManager";
-import { ISession } from "../../src/types/session.interface";
-import { v4 as uuidv4 } from "uuid";
 
 const authManager = new AuthTestManager();
 const userManager = new UserTestManager();
@@ -24,32 +22,32 @@ const login = {
   loginOrEmail: "admin",
 };
 
-const sessionData: ISession[] = [
-  {
-    ip: "192.192.192.192",
-    title: "MacOS",
-    lastActiveDate: new Date(),
-    deviceId: uuidv4(),
-  },
-  {
-    ip: "192.192.192.192",
-    title: "MacOS",
-    lastActiveDate: new Date(),
-    deviceId: uuidv4(),
-  },
-  {
-    ip: "192.192.192.192",
-    title: "MacOS",
-    lastActiveDate: new Date(),
-    deviceId: uuidv4(),
-  },
-  {
-    ip: "192.192.192.192",
-    title: "MacOS",
-    lastActiveDate: new Date(),
-    deviceId: uuidv4(),
-  },
-];
+// const sessionData: ISession[] = [
+//   {
+//     ip: "192.192.192.192",
+//     title: "MacOS",
+//     lastActiveDate: new Date(),
+//     deviceId: uuidv4(),
+//   },
+//   {
+//     ip: "192.192.192.192",
+//     title: "MacOS",
+//     lastActiveDate: new Date(),
+//     deviceId: uuidv4(),
+//   },
+//   {
+//     ip: "192.192.192.192",
+//     title: "MacOS",
+//     lastActiveDate: new Date(),
+//     deviceId: uuidv4(),
+//   },
+//   {
+//     ip: "192.192.192.192",
+//     title: "MacOS",
+//     lastActiveDate: new Date(),
+//     deviceId: uuidv4(),
+//   },
+// ];
 
 let refreshToken: string;
 let accessToken: string;
@@ -58,9 +56,10 @@ const incorrectToken =
 describe("Authorization test", () => {
   beforeAll(async () => {
     const token = authManager.basicLogin();
-    await getRequest().delete(`/api/${RoutePath.test}`);
+    await getRequest().delete(`/api${RoutePath.test}`);
     await userManager.createUser(user, token, 201);
   });
+  afterAll(async () => app.listen().close());
 
   it("should return 200 status code and access token", async () => {
     const { response, loginRes } = await authManager.login(
@@ -77,7 +76,7 @@ describe("Authorization test", () => {
 
   it("should return 200 status code and refresh token", async () => {
     const response = await getRequest()
-      .post(`/api/${RoutePath.auth}/refresh-token`)
+      .post(`/api${RoutePath.auth}/refresh-token`)
       .set("Cookie", refreshToken);
 
     accessToken = response.body.accessToken;
@@ -86,14 +85,14 @@ describe("Authorization test", () => {
 
   it("should return 401 status code", async () => {
     const response = await getRequest()
-      .post(`/api/${RoutePath.auth}/refresh-token`)
+      .post(`/api${RoutePath.auth}/refresh-token`)
       .set("Cookie", incorrectToken);
     expect(response.status).toBe(StatusEnum.UNAUTHORIZED);
   });
 
   it("should return 200 status code and auth user data", async () => {
     const response = await getRequest()
-      .get(`/api/${RoutePath.auth}/me`)
+      .get(`/api${RoutePath.auth}/me`)
       .set("Authorization", `Bearer ${accessToken}`);
     expect(response.status).toBe(StatusEnum.SUCCESS);
     expect(response.body).toEqual({
@@ -105,7 +104,7 @@ describe("Authorization test", () => {
 
   it("should return 401 status code", async () => {
     const response = await getRequest()
-      .get(`/api/${RoutePath.auth}/me`)
+      .get(`/api${RoutePath.auth}/me`)
       .set("Authorization", `Bearer ${incorrectToken}`);
     expect(response.status).toBe(StatusEnum.UNAUTHORIZED);
   });

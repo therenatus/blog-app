@@ -3,8 +3,6 @@ import { app } from "../../src";
 import { ISession } from "../../src/types/session.interface";
 import { RoutePath } from "../../src/controller/route.path";
 import { StatusEnum } from "../../src/types/status.enum";
-import { IPaginationResponse } from "../../src/types/pagination-response.interface";
-import { IPost } from "../../src/types/post.interface";
 
 const getRequest = () => {
   return request(app);
@@ -18,9 +16,10 @@ export class SessionTestManager {
       .expect(StatusEnum.CREATED);
   }
 
-  async getAllSession() {
+  async getAllSession(token: string) {
     const sessions = await getRequest()
-      .get(`/api/${RoutePath.security}`)
+      .get(`/api${RoutePath.security}`)
+      .set("Cookie", token)
       .expect(StatusEnum.SUCCESS);
     if (sessions.status === StatusEnum.SUCCESS) {
       return sessions;
@@ -32,26 +31,19 @@ export class SessionTestManager {
 
   async deleteAllSession(token: string, expectedStatusCode: StatusEnum) {
     await getRequest()
-      .delete(`/api/${RoutePath.security}`)
+      .delete(`/api${RoutePath.security}`)
       .set("Cookie", token)
       .expect(expectedStatusCode);
   }
 
-  async deleteOneSession(id: string, expectedStatusCode: StatusEnum) {
+  async deleteOneSession(
+    id: string,
+    token: string,
+    expectedStatusCode: StatusEnum,
+  ) {
     await getRequest()
-      .delete(`/api/${RoutePath.security}/${id}`)
+      .delete(`/api${RoutePath.security}/${id}`)
+      .set("Cookie", token)
       .expect(expectedStatusCode);
-  }
-
-  private _checkResponsesData(data: IPaginationResponse<IPost>) {
-    expect(data).toEqual(
-      expect.objectContaining({
-        pageSize: expect.any(Number),
-        page: expect.any(Number),
-        pagesCount: expect.any(Number),
-        totalCount: expect.any(Number),
-        items: expect.any(Array),
-      }),
-    );
   }
 }

@@ -4,13 +4,13 @@ import { UserRepository } from "../repositories/user.repository";
 import { TResponseWithData } from "../types/respone-with-data.type";
 import { IUser, UserDBType } from "../types/user.types";
 import { generateHash } from "../helpers/hashPassword";
-import { ObjectId } from "mongodb";
 import { v4 as uuidv4 } from "uuid";
 import add from "date-fns/add";
 import { IQuery } from "../types/query.interface";
 import { CreateUserDto } from "../controller/dto/create-user.dto";
 
 const Repository = new UserRepository();
+
 export class UserService {
   async getAll(
     query: IQuery,
@@ -28,7 +28,6 @@ export class UserService {
   async create(body: CreateUserDto): Promise<IUser | null> {
     const hashPassword = await generateHash(body.password);
     const user: UserDBType = {
-      _id: new ObjectId(),
       accountData: {
         id: (+new Date()).toString(),
         hashPassword,
@@ -44,9 +43,7 @@ export class UserService {
         isConfirmed: true,
       },
     };
-    const newUserId = await Repository.create(user);
-    if (!newUserId) return null;
-    const newUser = await Repository.findOneById(newUserId);
+    const newUser = await Repository.create(user);
     if (!newUser) return null;
     return newUser.accountData;
   }

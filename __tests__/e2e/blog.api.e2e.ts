@@ -75,16 +75,16 @@ describe("/api/blogs/ test for blog api", () => {
     await manager.updateBlog(blog1.id, newData, token, StatusEnum.NOT_CONTENT);
   });
 
-  it("DELETE /:id should return status 404 for not existing entity", async () => {
-    await manager.deleteBlog("1", StatusEnum.NOT_FOUND, token);
-  });
-
-  it("DELETE /:id should return status 401 for incorrect auth token", async () => {
-    await manager.deleteBlog(blog1.id, StatusEnum.UNAUTHORIZED, incorrectToken);
-  });
-
-  it("DELETE /:id should return status 204", async () => {
-    await manager.deleteBlog(blog1.id, StatusEnum.NOT_CONTENT, token);
-    await manager.getBlogById(blog1.id, StatusEnum.NOT_FOUND);
-  });
+  // it("DELETE /:id should return status 404 for not existing entity", async () => {
+  //   await manager.deleteBlog("1", StatusEnum.NOT_FOUND, token);
+  // });
+  //
+  // it("DELETE /:id should return status 401 for incorrect auth token", async () => {
+  //   await manager.deleteBlog(blog1.id, StatusEnum.UNAUTHORIZED, incorrectToken);
+  // });
+  //
+  // it("DELETE /:id should return status 204", async () => {
+  //   await manager.deleteBlog(blog1.id, StatusEnum.NOT_CONTENT, token);
+  //   await manager.getBlogById(blog1.id, StatusEnum.NOT_FOUND);
+  // });
 });

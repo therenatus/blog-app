@@ -1,5 +1,3 @@
-import {ObjectId} from "mongodb";
-
 export interface IUser {
   id: string;
   login: string;
@@ -9,15 +7,15 @@ export interface IUser {
 }
 
 export interface ILogin {
-  loginOrEmail: string,
-  password: string
+  loginOrEmail: string;
+  password: string;
 }
 
 type emailConfirmation = {
-  confirmationCode: string,
-  expirationDate: Date,
-  isConfirmed: boolean
-}
+  confirmationCode: string;
+  expirationDate: Date;
+  isConfirmed: boolean;
+};
 
 export interface IRegistration {
   login: string;
@@ -26,7 +24,6 @@ export interface IRegistration {
 }
 
 export type UserDBType = {
-  _id: ObjectId,
-  accountData: IUser,
-  emailConfirmation: emailConfirmation
-}
+  accountData: IUser;
+  emailConfirmation: emailConfirmation;
+};

@@ -11,19 +11,18 @@ const getRequest = () => {
 
 export class CommentTestManager {
   async createComment(id: string, token: string, data: CreateCommentDto) {
-    const response = await getRequest()
-      .post(`/api/${RoutePath.posts}/${id}/comments`)
-      .send(data)
+    return getRequest()
+      .post(`/api${RoutePath.posts}/${id}/comments`)
       .set("Authorization", `Bearer ${token}`)
+      .send(data)
       .expect(StatusEnum.CREATED);
-    return response;
   }
 
   async getComments() {}
 
   async getCommentById(id: string, expectedStatusCode: StatusEnum) {
     const response = await getRequest()
-      .get(`/api/${RoutePath.comments}/${id}`)
+      .get(`/api${RoutePath.comments}/${id}`)
       .expect(expectedStatusCode);
 
     if (response.status === StatusEnum.SUCCESS) {
@@ -38,7 +37,7 @@ export class CommentTestManager {
     token: string,
     expectedStatusCode: StatusEnum,
   ) {
-    const response = await getRequest()
+    await getRequest()
       .put(`/api/${RoutePath.comments}/${id}`)
       .send(data)
       .set("Authorization", `Bearer ${token}`)
@@ -50,7 +49,7 @@ export class CommentTestManager {
     token: string,
     expectedStatusCode: StatusEnum,
   ) {
-    const response = await getRequest()
+    await getRequest()
       .delete(`/api/${RoutePath.comments}/${id}`)
       .set("Authorization", `Bearer ${token}`)
       .expect(expectedStatusCode);
@@ -60,8 +59,6 @@ export class CommentTestManager {
     expect(data).toMatchObject({
       id: expect.any(String),
       content: expect.any(String),
-      // postId: expect.any(String),
-      // commentatorId: expect.any(String),
       createdAt: expect.any(String),
     });
   }

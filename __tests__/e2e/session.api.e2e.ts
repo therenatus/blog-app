@@ -29,11 +29,6 @@ const loginData: ILogin = {
   password: "123456",
 };
 
-const loginData2: ILogin = {
-  loginOrEmail: "admin2",
-  password: "123456",
-};
-
 const manager = new SessionTestManager();
 const userManager = new UserTestManager();
 const authManager = new AuthTestManager();
@@ -44,44 +39,37 @@ describe("Test session api", () => {
   let session: SessionResponseType[];
   beforeAll(async () => {
     token = authManager.basicLogin();
-    await getRequest().delete(`/api/${RoutePath.test}`);
+    await getRequest().delete(`/api${RoutePath.test}`);
     await userManager.createUser(user, token, StatusEnum.CREATED);
     await userManager.createUser(user2, token, StatusEnum.CREATED);
     await authManager.login(loginData, StatusEnum.SUCCESS);
     await authManager.login(loginData, StatusEnum.SUCCESS);
     await authManager.login(loginData, StatusEnum.SUCCESS);
-    const { response: res } = await authManager.login(
-      loginData,
-      StatusEnum.SUCCESS,
-    );
     const { response: response2 } = await authManager.login(
       loginData,
       StatusEnum.SUCCESS,
     );
-    refreshToken = res.header["set-cookie"];
+    refreshToken = response2.header["set-cookie"];
   });
 
   it("GET / should return 200 status code and array", async () => {
-    const response = await manager.getAllSession();
+    const response = await manager.getAllSession(refreshToken[0]);
     session = response.body as SessionResponseType[];
   });
 
   it("DELETE /:id should return 404 status code", async () => {
-    await manager.deleteOneSession("1", StatusEnum.NOT_FOUND);
+    await manager.deleteOneSession("1", refreshToken[0], StatusEnum.NOT_FOUND);
   });
 
   it("DELETE /:id should return 204 status code", async () => {
     await manager.deleteOneSession(
       session[session.length - 1].deviceId,
+      refreshToken[0],
       StatusEnum.NOT_CONTENT,
     );
   });
 
   it("DELETE / should return 204 status code", async () => {
-    const a = await manager.deleteAllSession(
-      refreshToken[0],
-      StatusEnum.NOT_CONTENT,
-    );
-    console.log(a);
+    await manager.deleteAllSession(refreshToken[0], StatusEnum.NOT_CONTENT);
   });
 });

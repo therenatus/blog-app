@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { ipCollection } from "../index";
 import { IpInterface } from "../types/ip.interface";
+import { IpModel } from "../model/ip.model";
 
 export const RateLimitMiddleware = async (
   req: Request,
@@ -16,10 +16,12 @@ export const RateLimitMiddleware = async (
     URL: url,
     date: new Date(),
   };
-  await ipCollection.insertOne(data);
-  const ips = await ipCollection
-    .find({ date: { $gt: tenSecondsAgo }, URL: url, IP: ip })
-    .toArray();
+  await IpModel.create(data);
+  const ips = await IpModel.find({
+    date: { $gt: tenSecondsAgo },
+    URL: url,
+    IP: ip,
+  }).exec();
   if (ips.length > 5) {
     return res.status(429).send();
   }

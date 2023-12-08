@@ -11,8 +11,6 @@ import { JwtService } from "../helpers/jwtService";
 import { CheckToken } from "../helpers/check-token";
 import { TokenRepository } from "../repositories/token.repository";
 import { SessionRepository } from "../repositories/session.repository";
-import { sessionCollection } from "../index";
-import { StatusEnum } from "../types/status.enum";
 
 const Repository = new UserRepository();
 const emailManager = new EmailManagers();
@@ -30,12 +28,6 @@ export class AuthService {
     if (!user) {
       return false;
     }
-    // const usedIp = await sessionRepository.getSessionById(ip);
-    // if (usedIp) {
-    //   await sessionRepository.updateByIP(deviceId, ip, userAgent);
-    // } else {
-    //
-    // }
     const session = await sessionRepository.login({
       deviceId,
       ip,
@@ -84,7 +76,6 @@ export class AuthService {
     const { email, login, password } = body;
     const hashPassword = await generateHash(password);
     const user: UserDBType = {
-      _id: new ObjectId(),
       accountData: {
         id: (+new Date()).toString(),
         login,

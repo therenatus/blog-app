@@ -1,16 +1,12 @@
-import {tokenCollection} from "../index";
+import { TokenModel } from "../model/token.model";
 
 export class TokenRepository {
-  async addToBlackList(token: string): Promise<boolean> {
-    const {acknowledged} = await tokenCollection.insertOne({token});
-    return acknowledged;
+  async addToBlackList(token: string) {
+    await TokenModel.create({ token });
   }
 
   async checkFromBlackList(token: string): Promise<boolean> {
-    const found = await tokenCollection.findOne({token});
-    if(found){
-      return false;
-    }
-    return true;
+    const found = await TokenModel.findOne({ token });
+    return !found;
   }
 }

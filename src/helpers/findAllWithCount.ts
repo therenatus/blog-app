@@ -2,7 +2,6 @@ import { IQuery } from "../types/query.interface";
 import { TResponseWithData } from "../types/respone-with-data.type";
 import { Collection, Document, WithId } from "mongodb";
 
-//@ts-ignore
 export async function FindAllWithCount<T extends Document>(
   query: IQuery,
   collection: Collection<T>,
