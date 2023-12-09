@@ -15,6 +15,12 @@ import { ILogin } from "../../src/types/user.types";
 import { CreateUserDto } from "../../src/controller/dto/create-user.dto";
 import mongoose from "mongoose";
 
+if (!process.env.MONGO_URI) {
+  console.log(`Error to get ports`);
+  process.exit(1);
+}
+const mongoURI = process.env.MONGO_URI;
+
 const getRequest = () => {
   return request(app);
 };
@@ -64,6 +70,7 @@ describe("test comment api", () => {
   let accessToken: string;
   let refreshToken: string;
   beforeAll(async () => {
+    await mongoose.connect(mongoURI);
     token = authManager.basicLogin();
     await getRequest().delete(`/api${RoutePath.test}`);
     await userManager.createUser(user, token, StatusEnum.CREATED);
@@ -75,7 +82,7 @@ describe("test comment api", () => {
     refreshToken = response.header["set-cookie"];
   });
 
-  afterAll(async () => mongoose.disconnect());
+  afterAll(async () => await mongoose.connection.close());
 
   it("GET / should return 200 status code and empty array", async () => {
     await manager.getComments();

@@ -4,6 +4,13 @@ import { app } from "../../src";
 import { AuthTestManager } from "../utils/authTestManager";
 import { StatusEnum } from "../../src/types/status.enum";
 import { UserTestManager } from "../utils/userTestManager";
+import mongoose from "mongoose";
+
+if (!process.env.MONGO_URI) {
+  console.log(`Error to get ports`);
+  process.exit(1);
+}
+const mongoURI = process.env.MONGO_URI;
 
 const authManager = new AuthTestManager();
 const userManager = new UserTestManager();
@@ -55,11 +62,12 @@ const incorrectToken =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE2OTg1NTk2NDU4MTQiLCJkZXZpY2VJZCI6IjBiMTA1MDE0LTQwOTQtNGJjMy05MDYxLWU5YjJlOGYyNTAwZSIsImlhdCI6MTY5ODU1OTY0NywiZXhwIjoxNjk4NTYwODQ3fQ.KEiroD-VWl3ZvPUqOk31G462epxPttYWYUuHIi3yaGI";
 describe("Authorization test", () => {
   beforeAll(async () => {
+    await mongoose.connect(mongoURI);
     const token = authManager.basicLogin();
     await getRequest().delete(`/api${RoutePath.test}`);
     await userManager.createUser(user, token, 201);
   });
-  afterAll(async () => app.listen().close());
+  afterAll(async () => await mongoose.connection.close());
 
   it("should return 200 status code and access token", async () => {
     const { response, loginRes } = await authManager.login(

@@ -11,6 +11,12 @@ import { IPost } from "../../src/types/post.interface";
 import { IBlog } from "../../src/types/blog.interface";
 import mongoose from "mongoose";
 
+if (!process.env.MONGO_URI) {
+  console.log(`Error to get ports`);
+  process.exit(1);
+}
+const mongoURI = process.env.MONGO_URI;
+
 const manager = new PostTestManager();
 const authManager = new AuthTestManager();
 const blogManager = new BlogTestManager();
@@ -45,11 +51,12 @@ describe("/api/posts test post api", () => {
   let post: IPost;
   let blog: IBlog;
   beforeAll(async () => {
+    await mongoose.connect(mongoURI);
     token = authManager.basicLogin();
     await getRequest().delete(`/api${RoutePath.test}`);
   });
 
-  afterAll(async () => mongoose.disconnect());
+  afterAll(async () => await mongoose.connection.close());
 
   it("should return 201 and new post entity", async () => {
     const responseBlog = await blogManager.createBlog(

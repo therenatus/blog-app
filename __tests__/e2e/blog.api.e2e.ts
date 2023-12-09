@@ -7,6 +7,13 @@ import { CreateBlogDto } from "../../src/controller/dto/create-blog.dto";
 import { BlogTestManager } from "../utils/blogTestManager";
 import { AuthTestManager } from "../utils/authTestManager";
 import { UpdateBlogDto } from "../../src/controller/dto/update-blog.dto";
+import mongoose from "mongoose";
+
+if (!process.env.MONGO_URI) {
+  console.log(`Error to get ports`);
+  process.exit(1);
+}
+const mongoURI = process.env.MONGO_URI;
 
 const manager = new BlogTestManager();
 const authManager = new AuthTestManager();
@@ -32,9 +39,12 @@ describe("/api/blogs/ test for blog api", () => {
   let token: string;
 
   beforeAll(async () => {
+    await mongoose.connect(mongoURI);
     await getRequest().delete(`/api${RoutePath.test}`);
     token = authManager.basicLogin();
   });
+
+  afterAll(async () => await mongoose.connection.close());
 
   it("GET / should return 200 and empty array", async () => {
     await manager.getBlogs();

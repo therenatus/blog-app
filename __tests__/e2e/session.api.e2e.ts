@@ -8,6 +8,13 @@ import { AuthTestManager } from "../utils/authTestManager";
 import { StatusEnum } from "../../src/types/status.enum";
 import { SessionResponseType } from "../../src/types/session.interface";
 import { ILogin } from "../../src/types/user.types";
+import mongoose from "mongoose";
+
+if (!process.env.MONGO_URI) {
+  console.log(`Error to get ports`);
+  process.exit(1);
+}
+const mongoURI = process.env.MONGO_URI;
 
 const getRequest = () => {
   return request(app);
@@ -38,6 +45,7 @@ describe("Test session api", () => {
   let refreshToken: string;
   let session: SessionResponseType[];
   beforeAll(async () => {
+    await mongoose.connect(mongoURI);
     token = authManager.basicLogin();
     await getRequest().delete(`/api${RoutePath.test}`);
     await userManager.createUser(user, token, StatusEnum.CREATED);
@@ -51,6 +59,8 @@ describe("Test session api", () => {
     );
     refreshToken = response2.header["set-cookie"];
   });
+
+  afterAll(async () => await mongoose.connection.close());
 
   it("GET / should return 200 status code and array", async () => {
     const response = await manager.getAllSession(refreshToken[0]);
