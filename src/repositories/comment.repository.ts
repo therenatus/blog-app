@@ -12,7 +12,7 @@ export class CommentRepository {
 
   async update(id: string, data: IComment): Promise<boolean> {
     const comment = await CommentModel.findOneAndUpdate({ id }, { data });
-    return !comment;
+    return !!comment;
   }
 
   async deleteComment(id: string): Promise<boolean> {

@@ -30,7 +30,7 @@ export class BlogRepository {
 
   async updateOne(id: string, body: any): Promise<boolean> {
     const blog = await BlogModel.findOneAndUpdate({ id }, { body });
-    return !blog;
+    return !!blog;
   }
 
   async deleteOne(id: string): Promise<boolean> {

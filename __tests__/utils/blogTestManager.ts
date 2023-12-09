@@ -5,7 +5,6 @@ import { StatusEnum } from "../../src/types/status.enum";
 import { RoutePath } from "../../src/controller/route.path";
 import { IBlog } from "../../src/types/blog.interface";
 import { IPaginationResponse } from "../../src/types/pagination-response.interface";
-import { IPost } from "../../src/types/post.interface";
 import { UpdateBlogDto } from "../../src/controller/dto/update-blog.dto";
 
 const getRequest = () => {
@@ -78,7 +77,7 @@ export class BlogTestManager {
     expectedStatusCode: StatusEnum,
   ) {
     await getRequest()
-      .put(`/api/${RoutePath.blogs}/${id}`)
+      .put(`/api${RoutePath.blogs}/${id}`)
       .send(data)
       .set("Authorization", token)
       .expect(expectedStatusCode);
