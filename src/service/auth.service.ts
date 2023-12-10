@@ -110,7 +110,7 @@ export class AuthService {
     await Repository.changeConfirmExpire(user.accountData.id);
     const user2 = await Repository.getOne(mail);
     console.log("user after", user2);
-    await emailManager.sendPasswordRecoveryMessages(user);
+    await emailManager.sendPasswordRecoveryMessages(user2!);
     return true;
   }
 
