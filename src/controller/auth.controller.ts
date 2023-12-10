@@ -62,10 +62,7 @@ router.post(
   RecoveryPasswordValidator,
   InputValidationMiddleware,
   async (req: RequestType<{}, { email: string }>, res: Response) => {
-    const user = await service.recoveryPassword(req.body.email);
-    if (!user) {
-      return res.sendStatus(StatusEnum.NOT_CONTENT);
-    }
+    await service.recoveryPassword(req.body.email);
     return res.sendStatus(StatusEnum.SUCCESS);
   },
 );

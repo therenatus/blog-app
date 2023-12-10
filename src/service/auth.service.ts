@@ -26,7 +26,7 @@ export class AuthService {
   ): Promise<ITokenResponse | boolean> {
     const deviceId: string = uuidv4();
     const user = await Repository.getOne(body.loginOrEmail);
-    if (!user) {
+    if (!user || !user.emailConfirmation.isConfirmed) {
       return false;
     }
     const session = await sessionRepository.login({
@@ -103,6 +103,7 @@ export class AuthService {
     if (!user) return false;
     const code = await _generateTokens(user.accountData.id);
     await Repository.updateCode(user.accountData.id, code.accessToken);
+    await Repository.changeConfirm(user.accountData.id, false);
     await emailManager.sendPasswordRecoveryMessages(user);
     return true;
   }
@@ -114,6 +115,7 @@ export class AuthService {
     }
     const hashPassword = await generateHash(data.newPassword);
     const updatePassword = await Repository.updatePassword(user, hashPassword);
+    await Repository.changeConfirm(user.accountData.id, true);
     if (!updatePassword) {
       return false;
     }

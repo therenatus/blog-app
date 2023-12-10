@@ -46,6 +46,7 @@ export class UserRepository {
       _id: 0,
     });
   }
+
   async create(body: UserDBType): Promise<UserDBType | null> {
     const user = await UserModel.create(body);
     return UserModel.findById(user._id, {
@@ -72,6 +73,14 @@ export class UserRepository {
     const { matchedCount } = await UserModel.updateOne(
       { "accountData.id": id },
       { $set: { "emailConfirmation.confirmationCode": code } },
+    );
+    return matchedCount !== 0;
+  }
+
+  async changeConfirm(id: string, status: boolean): Promise<boolean> {
+    const { matchedCount } = await UserModel.updateOne(
+      { "accountData.id": id },
+      { $set: { "emailConfirmation.isConfirmed": status } },
     );
     return matchedCount !== 0;
   }
