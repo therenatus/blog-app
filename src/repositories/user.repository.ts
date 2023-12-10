@@ -75,6 +75,14 @@ export class UserRepository {
     );
     return matchedCount !== 0;
   }
+
+  async updatePassword(id: string, newPassword: string): Promise<boolean> {
+    const { matchedCount } = await UserModel.updateOne(
+      { "accountData.id": id },
+      { $set: { "accountData.hashPassword": newPassword } },
+    );
+    return matchedCount !== 0;
+  }
 }
 
 async function FindAllUsers(

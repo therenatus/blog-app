@@ -11,6 +11,7 @@ import { JwtService } from "../helpers/jwtService";
 import { CheckToken } from "../helpers/check-token";
 import { TokenRepository } from "../repositories/token.repository";
 import { SessionRepository } from "../repositories/session.repository";
+import { UpdatePasswordDto } from "../controller/dto/update-password.dto";
 
 const Repository = new UserRepository();
 const emailManager = new EmailManagers();
@@ -95,6 +96,27 @@ export class AuthService {
     const createResult = Repository.create(user);
     await emailManager.sendConfirmMessages(user);
     return createResult;
+  }
+
+  async recoveryPassword(mail: string) {
+    const user = await Repository.getOne(mail);
+    if (!user) return false;
+    const code = await _generateTokens(user.accountData.id);
+    await Repository.updateCode(user.accountData.id, code.accessToken);
+    await emailManager.sendPasswordRecoveryMessages(user);
+  }
+
+  async setNewPassword(data: UpdatePasswordDto) {
+    const user = await jwtService.getUserByToken(data.recoveryCode);
+    if (!user) {
+      return false;
+    }
+    const hashPassword = await generateHash(data.newPassword);
+    const updatePassword = await Repository.updatePassword(user, hashPassword);
+    if (!updatePassword) {
+      return false;
+    }
+    return true;
   }
 
   async logout(token: string): Promise<boolean> {

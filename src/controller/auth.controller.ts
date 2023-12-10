@@ -10,6 +10,9 @@ import { RateLimitMiddleware } from "../middleware/rate-limit.middleware";
 import { RequestType } from "../types/request.type";
 import { ILogin, IRegistration } from "../types/user.types";
 import { StatusEnum } from "../types/status.enum";
+import { UpdatePasswordDto } from "./dto/update-password.dto";
+import { RecoveryPasswordValidator } from "./validator/recovery-password.validator";
+import { SetNewPasswordValidator } from "./validator/set-newPassword.validator";
 
 const router = express.Router();
 const service = new AuthService();
@@ -53,9 +56,35 @@ router.post("/refresh-token", async (req: Request, res: Response) => {
   res.status(StatusEnum.SUCCESS).send({ accessToken: data.accessToken });
 });
 
+router.post(
+  "/recovery-password",
+  RateLimitMiddleware,
+  RecoveryPasswordValidator,
+  InputValidationMiddleware,
+  async (req: RequestType<{}, { email: string }>, res: Response) => {
+    const user = await service.recoveryPassword(req.body.email);
+    if (!user) {
+      res.sendStatus(StatusEnum.NOT_CONTENT);
+    }
+    return res.sendStatus(StatusEnum.SUCCESS);
+  },
+);
+
+router.post(
+  "/new-password",
+  RateLimitMiddleware,
+  SetNewPasswordValidator,
+  InputValidationMiddleware,
+  async (req: RequestType<{}, UpdatePasswordDto>, res: Response) => {
+    const updated = await service.setNewPassword(req.body);
+    if (!updated) {
+      return res.sendStatus(StatusEnum.BAD_REQUEST);
+    }
+    return res.sendStatus(StatusEnum.NOT_CONTENT);
+  },
+);
 router.post("/logout", async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
-  // const accessToken = req.cookies.accessToken;
   if (!refreshToken) {
     return res.sendStatus(StatusEnum.UNAUTHORIZED);
   }
