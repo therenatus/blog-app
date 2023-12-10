@@ -7,13 +7,13 @@ export const RecoveryPasswordValidator = [
     .trim()
     .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
     .withMessage("Invalid email format"),
-  body("email")
-    .trim()
-    .custom(async (email) => {
-      const user = await repository.getOne(email);
-      if (!user) {
-        throw new Error("email is not exist");
-      }
-      return true;
-    }),
+  // body("email")
+  //   .trim()
+  //   .custom(async (email) => {
+  //     const user = await repository.getOne(email);
+  //     if (!user) {
+  //       throw new Error("email is not exist");
+  //     }
+  //     return true;
+  //   }),
 ];

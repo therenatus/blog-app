@@ -27,7 +27,7 @@ export class UserRepository {
   async getOneByCode(code: string): Promise<UserDBType | null> {
     return UserModel.findOne({
       "emailConfirmation.confirmationCode": code,
-    });
+    }).lean();
   }
 
   async getOneByEmail(email: string): Promise<UserDBType | null> {
