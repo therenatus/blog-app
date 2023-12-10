@@ -100,11 +100,16 @@ export class AuthService {
 
   async recoveryPassword(mail: string) {
     const user = await Repository.getOne(mail);
+    console.log("user before", user);
     if (!user) return false;
     const code = uuidv4();
-    await Repository.updateCode(user.accountData.id, code);
+    console.log(code);
+    const a = await Repository.updateCode(user.accountData.id, code);
+    console.log("update code", a);
     await Repository.changeConfirm(user.accountData.id, false);
     await Repository.changeConfirmExpire(user.accountData.id);
+    const user2 = await Repository.getOne(mail);
+    console.log("user after", user2);
     await emailManager.sendPasswordRecoveryMessages(user);
     return true;
   }
