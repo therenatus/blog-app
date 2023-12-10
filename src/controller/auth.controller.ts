@@ -63,7 +63,7 @@ router.post(
   InputValidationMiddleware,
   async (req: RequestType<{}, { email: string }>, res: Response) => {
     await service.recoveryPassword(req.body.email);
-    return res.sendStatus(StatusEnum.SUCCESS);
+    return res.sendStatus(StatusEnum.NOT_CONTENT);
   },
 );
 
