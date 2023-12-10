@@ -104,6 +104,7 @@ export class AuthService {
     const code = await _generateTokens(user.accountData.id);
     await Repository.updateCode(user.accountData.id, code.accessToken);
     await emailManager.sendPasswordRecoveryMessages(user);
+    return true;
   }
 
   async setNewPassword(data: UpdatePasswordDto) {
