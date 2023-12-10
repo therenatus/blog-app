@@ -3,6 +3,7 @@ import { IUser, UserDBType } from "../types/user.types";
 import { TResponseWithData } from "../types/respone-with-data.type";
 import { ObjectId, WithId } from "mongodb";
 import { UserModel } from "../model/user.model";
+import add from "date-fns/add";
 
 export class UserRepository {
   async getAll(
@@ -81,6 +82,20 @@ export class UserRepository {
     const { matchedCount } = await UserModel.updateOne(
       { "accountData.id": id },
       { $set: { "emailConfirmation.isConfirmed": status } },
+    );
+    return matchedCount !== 0;
+  }
+
+  async changeConfirmExpire(id: string): Promise<boolean> {
+    const { matchedCount } = await UserModel.updateOne(
+      { "accountData.id": id },
+      {
+        $set: {
+          "emailConfirmation.expirationDate": add(new Date(), {
+            hours: 1,
+          }),
+        },
+      },
     );
     return matchedCount !== 0;
   }

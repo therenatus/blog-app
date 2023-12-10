@@ -101,20 +101,27 @@ export class AuthService {
   async recoveryPassword(mail: string) {
     const user = await Repository.getOne(mail);
     if (!user) return false;
-    const code = await _generateTokens(user.accountData.id);
-    await Repository.updateCode(user.accountData.id, code.accessToken);
+    const code = uuidv4();
+    await Repository.updateCode(user.accountData.id, code);
     await Repository.changeConfirm(user.accountData.id, false);
+    await Repository.changeConfirmExpire(user.accountData.id);
     await emailManager.sendPasswordRecoveryMessages(user);
     return true;
   }
 
   async setNewPassword(data: UpdatePasswordDto) {
-    const user = await jwtService.getUserByToken(data.recoveryCode);
+    const user = await Repository.getOneByCode(data.recoveryCode);
     if (!user) {
       return false;
     }
+    if (user.emailConfirmation.expirationDate < new Date()) {
+      return false;
+    }
     const hashPassword = await generateHash(data.newPassword);
-    const updatePassword = await Repository.updatePassword(user, hashPassword);
+    const updatePassword = await Repository.updatePassword(
+      user.accountData.id,
+      hashPassword,
+    );
     await Repository.changeConfirm(user.accountData.id, true);
     if (!updatePassword) {
       return false;
