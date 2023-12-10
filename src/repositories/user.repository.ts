@@ -25,9 +25,11 @@ export class UserRepository {
   }
 
   async getOneByCode(code: string): Promise<UserDBType | null> {
-    return UserModel.findOne({
+    const a = await UserModel.findOne({
       "emailConfirmation.confirmationCode": code,
-    }).lean();
+    }).exec();
+    console.log(a);
+    return a;
   }
 
   async getOneByEmail(email: string): Promise<UserDBType | null> {
@@ -65,7 +67,7 @@ export class UserRepository {
   async confirmUser(id: string): Promise<boolean> {
     const { matchedCount } = await UserModel.updateOne(
       { "accountData.id": id },
-      { $set: { "emailConfirmation.isConfirmed": true } },
+      { "emailConfirmation.isConfirmed": true },
     );
     return matchedCount !== 0;
   }
@@ -73,7 +75,7 @@ export class UserRepository {
   async updateCode(id: string, code: string): Promise<boolean> {
     const { matchedCount } = await UserModel.updateOne(
       { "accountData.id": id },
-      { $set: { "emailConfirmation.confirmationCode": code } },
+      { "emailConfirmation.confirmationCode": code },
     );
     return matchedCount !== 0;
   }
@@ -81,7 +83,7 @@ export class UserRepository {
   async changeConfirm(id: string, status: boolean): Promise<boolean> {
     const { matchedCount } = await UserModel.updateOne(
       { "accountData.id": id },
-      { $set: { "emailConfirmation.isConfirmed": status } },
+      { "emailConfirmation.isConfirmed": status },
     );
     return matchedCount !== 0;
   }
@@ -90,11 +92,9 @@ export class UserRepository {
     const { matchedCount } = await UserModel.updateOne(
       { "accountData.id": id },
       {
-        $set: {
-          "emailConfirmation.expirationDate": add(new Date(), {
-            hours: 1,
-          }),
-        },
+        "emailConfirmation.expirationDate": add(new Date(), {
+          hours: 1,
+        }),
       },
     );
     return matchedCount !== 0;
@@ -103,7 +103,7 @@ export class UserRepository {
   async updatePassword(id: string, newPassword: string): Promise<boolean> {
     const { matchedCount } = await UserModel.updateOne(
       { "accountData.id": id },
-      { $set: { "accountData.hashPassword": newPassword } },
+      { "accountData.hashPassword": newPassword },
     );
     return matchedCount !== 0;
   }
