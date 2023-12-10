@@ -1,6 +1,5 @@
 import { body } from "express-validator";
 import { UserRepository } from "../../repositories/user.repository";
-import { UserModel } from "../../model/user.model";
 
 const repository = new UserRepository();
 
@@ -10,11 +9,7 @@ export const SetNewPasswordValidator = [
     .trim()
     .isString()
     .custom(async (recoveryCode) => {
-      console.log(recoveryCode);
-      const user = await UserModel.findOne({
-        "emailConfirmation.confirmationCode": recoveryCode,
-      });
-      console.log(user);
+      const user = await repository.getOneByCode(recoveryCode);
       if (!user) {
         throw new Error("user not found");
       }
