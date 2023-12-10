@@ -64,7 +64,7 @@ router.post(
   async (req: RequestType<{}, { email: string }>, res: Response) => {
     const user = await service.recoveryPassword(req.body.email);
     if (!user) {
-      res.sendStatus(StatusEnum.NOT_CONTENT);
+      return res.sendStatus(StatusEnum.NOT_CONTENT);
     }
     return res.sendStatus(StatusEnum.SUCCESS);
   },
