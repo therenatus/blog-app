@@ -57,7 +57,7 @@ router.post("/refresh-token", async (req: Request, res: Response) => {
 });
 
 router.post(
-  "/recovery-password",
+  "/password-recovery",
   RateLimitMiddleware,
   RecoveryPasswordValidator,
   InputValidationMiddleware,
