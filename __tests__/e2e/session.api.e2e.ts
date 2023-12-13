@@ -1,6 +1,6 @@
 import request from "supertest";
 import { app } from "../../src";
-import { RoutePath } from "../../src/controller/route.path";
+import { RoutePath } from "../../src/router/route.path";
 import { SessionTestManager } from "../utils/sessionTestManager";
 import { UserTestManager } from "../utils/userTestManager";
 import { CreateUserDto } from "../../src/controller/dto/create-user.dto";

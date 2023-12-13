@@ -1,6 +1,6 @@
 import request from "supertest";
 import { app } from "../../src";
-import { RoutePath } from "../../src/controller/route.path";
+import { RoutePath } from "../../src/router/route.path";
 import { StatusEnum } from "../../src/types/status.enum";
 import { IBlog } from "../../src/types/blog.interface";
 import { CreateBlogDto } from "../../src/controller/dto/create-blog.dto";

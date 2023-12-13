@@ -1,6 +1,6 @@
 import request from "supertest";
 import { app } from "../../src";
-import { RoutePath } from "../../src/controller/route.path";
+import { RoutePath } from "../../src/router/route.path";
 import { CreatePostDto } from "../../src/controller/dto/create-post.dto";
 import { StatusEnum } from "../../src/types/status.enum";
 import { IPost } from "../../src/types/post.interface";

@@ -1,6 +1,6 @@
 import request from "supertest";
 import { app } from "../../src";
-import { RoutePath } from "../../src/controller/route.path";
+import { RoutePath } from "../../src/router/route.path";
 import { CreateUserDto } from "../../src/controller/dto/create-user.dto";
 import { UserTestManager } from "../utils/userTestManager";
 import { StatusEnum } from "../../src/types/status.enum";

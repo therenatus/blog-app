@@ -8,7 +8,11 @@ if (!secret) {
 }
 
 export class JwtService {
-  async generateJwt(id: string, expire: string, deviceID?: string) {
+  async generateJwt(
+    id: string,
+    expire: string,
+    deviceID?: string,
+  ): Promise<string> {
     return jwt.sign({ id, deviceId: deviceID }, secret, { expiresIn: expire });
   }
 

@@ -2,7 +2,7 @@ import request from "supertest";
 import { app } from "../../src";
 import { CreateBlogDto } from "../../src/controller/dto/create-blog.dto";
 import { StatusEnum } from "../../src/types/status.enum";
-import { RoutePath } from "../../src/controller/route.path";
+import { RoutePath } from "../../src/router/route.path";
 import { IBlog } from "../../src/types/blog.interface";
 import { IPaginationResponse } from "../../src/types/pagination-response.interface";
 import { UpdateBlogDto } from "../../src/controller/dto/update-blog.dto";

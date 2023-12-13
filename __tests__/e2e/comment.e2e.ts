@@ -4,7 +4,7 @@ import { PostTestManager } from "../utils/postTestManager";
 import { BlogTestManager } from "../utils/blogTestManager";
 import { CreatePostDto } from "../../src/controller/dto/create-post.dto";
 import { CreateBlogDto } from "../../src/controller/dto/create-blog.dto";
-import { RoutePath } from "../../src/controller/route.path";
+import { RoutePath } from "../../src/router/route.path";
 import { AuthTestManager } from "../utils/authTestManager";
 import request from "supertest";
 import { app } from "../../src";

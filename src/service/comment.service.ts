@@ -6,21 +6,23 @@ import { StatusEnum } from "../types/status.enum";
 import { PostRepository } from "../repositories/post.repository";
 import { CreateCommentDto } from "../controller/dto/create-comment.dto";
 
-const commentRepository = new CommentRepository();
-const userRepository = new UserRepository();
-const postRepository = new PostRepository();
-
 export class CommentService {
+  constructor(
+    protected repository: CommentRepository,
+    protected userRepository: UserRepository,
+    protected postRepository: PostRepository,
+  ) {}
+
   async createComment(
     postId: string,
     body: CreateCommentDto,
     userId: string,
   ): Promise<ICommentResponse | boolean> {
-    const post = await postRepository.findOne(postId);
+    const post = await this.postRepository.findOne(postId);
     if (!post) {
       return false;
     }
-    const author = await userRepository.findOneById(userId);
+    const author = await this.userRepository.findOneById(userId);
     if (!author) {
       return false;
     }
@@ -32,7 +34,7 @@ export class CommentService {
       commentatorId: userId,
     };
 
-    const comment = await commentRepository.create(newComment);
+    const comment = await this.repository.create(newComment);
     if (!comment) {
       return false;
     }
@@ -44,14 +46,14 @@ export class CommentService {
   }
 
   async update(body: any, id: string, userId: string): Promise<StatusEnum> {
-    const comment = await commentRepository.findOne(id);
+    const comment = await this.repository.findOne(id);
     if (!comment) {
       return StatusEnum.NOT_FOUND;
     }
     if (comment.commentatorId !== userId) {
       return StatusEnum.FORBIDDEN;
     }
-    const newComment = await commentRepository.update(id, body);
+    const newComment = await this.repository.update(id, body);
     if (!newComment) {
       return StatusEnum.NOT_FOUND;
     }
@@ -59,11 +61,11 @@ export class CommentService {
   }
 
   async getOne(id: string): Promise<ICommentResponse | StatusEnum> {
-    const comment = await commentRepository.findOne(id);
+    const comment = await this.repository.findOne(id);
     if (comment === null) {
       return StatusEnum.NOT_FOUND;
     }
-    const user = await userRepository.findOneById(comment.commentatorId);
+    const user = await this.userRepository.findOneById(comment.commentatorId);
     if (user === null) {
       return StatusEnum.NOT_FOUND;
     }
@@ -71,14 +73,14 @@ export class CommentService {
   }
 
   async deleteOne(id: string, userId: string): Promise<StatusEnum> {
-    const comment = await commentRepository.findOne(id);
+    const comment = await this.repository.findOne(id);
     if (comment === null) {
       return StatusEnum.NOT_FOUND;
     }
     if (comment.commentatorId !== userId) {
       return StatusEnum.FORBIDDEN;
     }
-    const deletedComment = await commentRepository.deleteComment(id);
+    const deletedComment = await this.repository.deleteComment(id);
     if (!deletedComment) {
       return StatusEnum.NOT_FOUND;
     }

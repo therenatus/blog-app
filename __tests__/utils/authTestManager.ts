@@ -2,7 +2,7 @@ import { ILogin } from "../../src/types/user.types";
 import { StatusEnum } from "../../src/types/status.enum";
 import request from "supertest";
 import { app } from "../../src";
-import { RoutePath } from "../../src/controller/route.path";
+import { RoutePath } from "../../src/router/route.path";
 
 export class AuthTestManager {
   basicLogin() {
@@ -33,8 +33,6 @@ export class AuthTestManager {
       .post(`/api/${RoutePath.auth}/refresh-token`)
       .set("Cookie", token);
     expect(response.status).toBe(StatusEnum.SUCCESS);
-    const accessToken = response.body.accessToken;
-    const refreshToken = response.body.refreshToken;
     return response;
   }
 }

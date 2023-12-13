@@ -1,9 +1,14 @@
-import express from "express";
-import { Test } from "../service/testing.service";
+import { TestingService } from "../service/testing.service";
+import { Request, Response } from "express";
+import { StatusEnum } from "../types/status.enum";
 
-const router = express.Router();
-const service = new Test();
+export class TestingController {
+  constructor(protected service: TestingService) {}
 
-router.delete("/all-data", service.deleteAll);
-
-export default router;
+  async deleteAll(req: Request, res: Response) {
+    const deleted = await this.service.deleteAllData();
+    if (deleted) {
+      return res.sendStatus(StatusEnum.NOT_CONTENT);
+    }
+  }
+}

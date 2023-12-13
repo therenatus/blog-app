@@ -1,6 +1,6 @@
 import request from "supertest";
 import { app } from "../../src";
-import { RoutePath } from "../../src/controller/route.path";
+import { RoutePath } from "../../src/router/route.path";
 import { IComment } from "../../src/types/comment.interface";
 import { StatusEnum } from "../../src/types/status.enum";
 import { CreateCommentDto } from "../../src/controller/dto/create-comment.dto";

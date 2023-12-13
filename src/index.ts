@@ -1,7 +1,7 @@
 import express, { Express } from "express";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
-import router from "./controller";
+import router from "./router";
 import cookieParser from "cookie-parser";
 import { runDb } from "./db";
 

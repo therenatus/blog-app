@@ -2,7 +2,7 @@ import { CreateUserDto } from "../../src/controller/dto/create-user.dto";
 import { StatusEnum } from "../../src/types/status.enum";
 import request from "supertest";
 import { app } from "../../src";
-import { RoutePath } from "../../src/controller/route.path";
+import { RoutePath } from "../../src/router/route.path";
 
 export class UserTestManager {
   async createUser(

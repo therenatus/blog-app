@@ -1,7 +1,7 @@
 import request from "supertest";
 import { app } from "../../src";
 import { ISession } from "../../src/types/session.interface";
-import { RoutePath } from "../../src/controller/route.path";
+import { RoutePath } from "../../src/router/route.path";
 import { StatusEnum } from "../../src/types/status.enum";
 
 const getRequest = () => {

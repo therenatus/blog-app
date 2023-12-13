@@ -1,5 +1,5 @@
 import request from "supertest";
-import { RoutePath } from "../../src/controller/route.path";
+import { RoutePath } from "../../src/router/route.path";
 import { app } from "../../src";
 import { AuthTestManager } from "../utils/authTestManager";
 import { StatusEnum } from "../../src/types/status.enum";

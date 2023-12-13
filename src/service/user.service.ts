@@ -9,9 +9,8 @@ import add from "date-fns/add";
 import { IQuery } from "../types/query.interface";
 import { CreateUserDto } from "../controller/dto/create-user.dto";
 
-const Repository = new UserRepository();
-
 export class UserService {
+  constructor(protected repository: UserRepository) {}
   async getAll(
     query: IQuery,
   ): Promise<TResponseWithData<IUser[], TMeta, "items", "meta">> {
@@ -20,7 +19,7 @@ export class UserService {
       ...querySearch,
       totalCount: 0,
     };
-    const { data, totalCount } = await Repository.getAll(querySearch);
+    const { data, totalCount } = await this.repository.getAll(querySearch);
     meta.totalCount = totalCount;
     return { items: data, meta: meta };
   }
@@ -43,16 +42,16 @@ export class UserService {
         isConfirmed: true,
       },
     };
-    const newUser = await Repository.create(user);
+    const newUser = await this.repository.create(user);
     if (!newUser) return null;
     return newUser.accountData;
   }
 
   async delete(id: string): Promise<boolean> {
-    return await Repository.delete(id);
+    return await this.repository.delete(id);
   }
 
   async getOne(id: string): Promise<UserDBType | null> {
-    return await Repository.getOne(id);
+    return await this.repository.getOne(id);
   }
 }

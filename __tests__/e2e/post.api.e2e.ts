@@ -1,4 +1,4 @@
-import { RoutePath } from "../../src/controller/route.path";
+import { RoutePath } from "../../src/router/route.path";
 import { AuthTestManager } from "../utils/authTestManager";
 import request from "supertest";
 import { app } from "../../src";

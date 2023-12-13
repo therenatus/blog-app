@@ -13,23 +13,25 @@ import { TokenRepository } from "../repositories/token.repository";
 import { SessionRepository } from "../repositories/session.repository";
 import { UpdatePasswordDto } from "../controller/dto/update-password.dto";
 
-const Repository = new UserRepository();
-const emailManager = new EmailManagers();
-const jwtService = new JwtService();
-const tokenRepository = new TokenRepository();
-const sessionRepository = new SessionRepository();
 export class AuthService {
+  constructor(
+    protected repository: UserRepository,
+    protected emailManager: EmailManagers,
+    protected jwtService: JwtService,
+    protected tokenRepository: TokenRepository,
+    protected sessionRepository: SessionRepository,
+  ) {}
   async login(
     body: ILogin,
     ip: string,
     userAgent: string,
   ): Promise<ITokenResponse | boolean> {
     const deviceId: string = uuidv4();
-    const user = await Repository.getOne(body.loginOrEmail);
+    const user = await this.repository.getOne(body.loginOrEmail);
     if (!user || !user.emailConfirmation.isConfirmed) {
       return false;
     }
-    const session = await sessionRepository.login({
+    const session = await this.sessionRepository.login({
       deviceId,
       ip,
       title: userAgent,
@@ -46,34 +48,34 @@ export class AuthService {
     if (!validPassword) {
       return false;
     }
-    return await _generateTokens(user.accountData.id, deviceId);
+    return await this._generateTokens(user.accountData.id, deviceId);
   }
 
   async refreshToken(token: string): Promise<ITokenResponse | null> {
     const id = CheckToken(token);
-    const decode = await jwtService.getUserByToken(token);
-    const validToken = await tokenRepository.checkFromBlackList(token);
+    const decode = await this.jwtService.getUserByToken(token);
+    const validToken = await this.tokenRepository.checkFromBlackList(token);
     if (!id || !validToken) {
       return null;
     }
-    const isCanRefresh = await sessionRepository.findOne(decode.deviceId);
+    const isCanRefresh = await this.sessionRepository.findOne(decode.deviceId);
     if (!isCanRefresh) {
       return null;
     }
-    await sessionRepository.updateLastActive(decode.deviceId);
-    await tokenRepository.addToBlackList(token);
-    return await _generateTokens(id, decode.deviceId);
+    await this.sessionRepository.updateLastActive(decode.deviceId);
+    await this.tokenRepository.addToBlackList(token);
+    return await this._generateTokens(id, decode.deviceId);
   }
 
   async getMe(userID: string | ObjectId): Promise<IUser | boolean> {
-    const me = await Repository.findOneById(userID);
+    const me = await this.repository.findOneById(userID);
     if (!me) {
       return false;
     }
     return me.accountData;
   }
 
-  async registration(body: IRegistration) {
+  async registration(body: IRegistration): Promise<UserDBType | null> {
     const { email, login, password } = body;
     const hashPassword = await generateHash(password);
     const user: UserDBType = {
@@ -93,25 +95,25 @@ export class AuthService {
       },
     };
 
-    const createResult = Repository.create(user);
-    await emailManager.sendConfirmMessages(user);
+    const createResult = this.repository.create(user);
+    await this.emailManager.sendConfirmMessages(user);
     return createResult;
   }
 
-  async recoveryPassword(mail: string) {
-    const user = await Repository.getOne(mail);
+  async recoveryPassword(mail: string): Promise<boolean> {
+    const user = await this.repository.getOne(mail);
     if (!user) return false;
     const code = uuidv4();
-    await Repository.updateCode(user.accountData.id, code);
-    await Repository.changeConfirm(user.accountData.id, false);
-    await Repository.changeConfirmExpire(user.accountData.id);
-    const user2 = await Repository.getOne(mail);
-    await emailManager.sendPasswordRecoveryMessages(user2!);
+    await this.repository.updateCode(user.accountData.id, code);
+    await this.repository.changeConfirm(user.accountData.id, false);
+    await this.repository.changeConfirmExpire(user.accountData.id);
+    const user2 = await this.repository.getOne(mail);
+    await this.emailManager.sendPasswordRecoveryMessages(user2!);
     return true;
   }
 
-  async setNewPassword(data: UpdatePasswordDto) {
-    const user = await Repository.getOneByCode(data.recoveryCode);
+  async setNewPassword(data: UpdatePasswordDto): Promise<boolean> {
+    const user = await this.repository.getOneByCode(data.recoveryCode);
     if (!user) {
       return false;
     }
@@ -119,60 +121,57 @@ export class AuthService {
       return false;
     }
     const hashPassword = await generateHash(data.newPassword);
-    const updatePassword = await Repository.updatePassword(
+
+    await this.repository.changeConfirm(user.accountData.id, true);
+    return await this.repository.updatePassword(
       user.accountData.id,
       hashPassword,
     );
-    await Repository.changeConfirm(user.accountData.id, true);
-    if (!updatePassword) {
-      return false;
-    }
-    return true;
   }
 
   async logout(token: string): Promise<boolean> {
     if (!CheckToken(token)) {
       return false;
     }
-    const decode = await jwtService.getUserByToken(token);
-    const validToken = await tokenRepository.checkFromBlackList(token);
+    const decode = await this.jwtService.getUserByToken(token);
+    const validToken = await this.tokenRepository.checkFromBlackList(token);
     if (!validToken) {
       return false;
     }
-    const isCanLogout = await sessionRepository.findOne(decode.deviceId);
+    const isCanLogout = await this.sessionRepository.findOne(decode.deviceId);
     if (!isCanLogout) {
       return false;
     }
-    await tokenRepository.addToBlackList(token);
-    await sessionRepository.deleteOne(decode.deviceId);
+    await this.tokenRepository.addToBlackList(token);
+    await this.sessionRepository.deleteOne(decode.deviceId);
     return true;
   }
   async resendEmail(email: string) {
-    const user = await Repository.getOneByEmail(email);
+    const user = await this.repository.getOneByEmail(email);
     const code = uuidv4();
     if (!user) {
       return null;
     }
-    await Repository.updateCode(user.accountData.id, code);
-    const userWithNewCode = await Repository.getOneByEmail(email);
-    await emailManager.sendConfirmMessages(userWithNewCode!);
+    await this.repository.updateCode(user.accountData.id, code);
+    const userWithNewCode = await this.repository.getOneByEmail(email);
+    await this.emailManager.sendConfirmMessages(userWithNewCode!);
   }
 
   async confirmUser(code: string) {
-    const user = await Repository.getOneByCode(code);
-    return await Repository.confirmUser(user!.accountData.id);
+    const user = await this.repository.getOneByCode(code);
+    return await this.repository.confirmUser(user!.accountData.id);
+  }
+
+  private async _generateTokens(
+    id: string,
+    deviceId?: string,
+  ): Promise<ITokenResponse> {
+    const accessToken = await this.jwtService.generateJwt(id, "30s");
+    const refreshToken = await this.jwtService.generateJwt(
+      id,
+      "20m",
+      deviceId ? deviceId : undefined,
+    );
+    return { accessToken: accessToken, refreshToken: refreshToken };
   }
 }
-
-const _generateTokens = async (
-  id: string,
-  deviceId?: string,
-): Promise<ITokenResponse> => {
-  const accessToken = await jwtService.generateJwt(id, "30s");
-  const refreshToken = await jwtService.generateJwt(
-    id,
-    "20m",
-    deviceId ? deviceId : undefined,
-  );
-  return { accessToken: accessToken, refreshToken: refreshToken };
-};
