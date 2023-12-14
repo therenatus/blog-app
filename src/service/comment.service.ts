@@ -116,7 +116,6 @@ export class CommentService {
     if (!userId) {
       comment.likesAuthors = [];
     }
-    console.log(comment);
     const user = await this.userRepository.findOneById(comment.commentatorId);
     if (user === null) {
       return StatusEnum.NOT_FOUND;
