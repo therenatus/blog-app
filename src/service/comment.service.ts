@@ -9,7 +9,6 @@ import { UserRepository } from "../repositories/user.repository";
 import { StatusEnum } from "../types/status.enum";
 import { PostRepository } from "../repositories/post.repository";
 import { CreateCommentDto } from "../controller/dto/create-comment.dto";
-import { CommentModel } from "../model/comment.model";
 import { JwtService } from "../helpers/jwtService";
 
 export class CommentService {
@@ -25,7 +24,6 @@ export class CommentService {
     body: CreateCommentDto,
     userId: string,
   ): Promise<CommentResponseType | boolean> {
-    const newComment = new CommentModel();
     const post = await this.postRepository.findOne(postId);
     if (!post) {
       return false;
@@ -34,14 +32,24 @@ export class CommentService {
     if (!author) {
       return false;
     }
-    newComment.commentatorId = userId;
-    newComment.id = (+new Date()).toString();
-    newComment.postId = postId;
-    newComment.createdAt = new Date();
-    newComment.content = body.content;
+    const newComment: CommentType = {
+      ...body,
+      id: (+new Date()).toString(),
+      createdAt: new Date(),
+      postId: postId,
+      commentatorId: userId,
+      likesAuthors: [],
+      likesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+      },
+    };
 
-    const com = await this.repository.updateComment(newComment);
-    const commentWithUser = CommentUserMapping(com, author);
+    const comment = await this.repository.create(newComment);
+    if (!comment) {
+      return false;
+    }
+    const commentWithUser = CommentUserMapping(newComment, author);
     if (!commentWithUser) {
       return false;
     }
@@ -111,7 +119,9 @@ export class CommentService {
     auth: string | undefined,
   ): Promise<CommentResponseType | StatusEnum> {
     const userId = await this.getUserIdFromAuth(auth);
+    console.log("userid", userId);
     let comment = await this.getCommentForUser(id, userId);
+    console.log("comment", comment);
     if (comment === null) {
       return StatusEnum.NOT_FOUND;
     }
@@ -120,6 +130,7 @@ export class CommentService {
     }
 
     const user = await this.userRepository.findOneById(comment.commentatorId);
+    console.log("user", user);
     if (user === null) {
       return StatusEnum.NOT_FOUND;
     }
@@ -156,6 +167,7 @@ export class CommentService {
   ): Promise<CommentType | null> {
     if (userId) {
       const query = await this.repository.findOneWithLike(id, userId.id, true);
+      console.log("query", query);
       if (query !== null) {
         return query;
       }
