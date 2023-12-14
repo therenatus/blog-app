@@ -16,7 +16,7 @@ export class PostRepository {
     ObjectId.isValid(id)
       ? (findBy = { _id: new ObjectId(id) })
       : (findBy = { id });
-    return PostModel.findOne(findBy, { _id: 0 });
+    return PostModel.findOne(findBy, { _id: 0 }).lean();
   }
 
   async create(body: IPost): Promise<IPost | null> {
