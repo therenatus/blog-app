@@ -21,4 +21,10 @@ router.delete(
   commentController.deleteComment.bind(commentController),
 );
 
+router.put(
+  "/:id/like-status",
+  AuthMiddleware,
+  commentController.like.bind(commentController),
+);
+
 export default router;

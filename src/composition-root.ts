@@ -45,6 +45,7 @@ const commentService = new CommentService(
   commentRepository,
   userRepository,
   postRepository,
+  jwtService,
 );
 const postService = new PostService(postRepository, blogRepository);
 const sessionService = new SecurityService(sessionRepository, jwtService);

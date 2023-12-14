@@ -166,7 +166,7 @@ export class AuthService {
     id: string,
     deviceId?: string,
   ): Promise<ITokenResponse> {
-    const accessToken = await this.jwtService.generateJwt(id, "30s");
+    const accessToken = await this.jwtService.generateJwt(id, "30m");
     const refreshToken = await this.jwtService.generateJwt(
       id,
       "20m",

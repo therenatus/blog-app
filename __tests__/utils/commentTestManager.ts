@@ -1,7 +1,7 @@
 import request from "supertest";
 import { app } from "../../src";
 import { RoutePath } from "../../src/router/route.path";
-import { IComment } from "../../src/types/comment.interface";
+import { CommentType } from "../../src/types/comment.interface";
 import { StatusEnum } from "../../src/types/status.enum";
 import { CreateCommentDto } from "../../src/controller/dto/create-comment.dto";
 
@@ -55,7 +55,7 @@ export class CommentTestManager {
       .expect(expectedStatusCode);
   }
 
-  private _checkComment(data: IComment) {
+  private _checkComment(data: CommentType) {
     expect(data).toMatchObject({
       id: expect.any(String),
       content: expect.any(String),

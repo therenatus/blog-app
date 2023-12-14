@@ -1,7 +1,7 @@
-import { body, oneOf } from "express-validator";
-import { UserRepository } from "../../repositories/user.repository";
+import { body } from "express-validator";
+//import { UserRepository } from "../../repositories/user.repository";
 
-const repository = new UserRepository();
+//const repository = new UserRepository();
 export const RecoveryPasswordValidator = [
   body("email")
     .trim()

@@ -1,23 +1,27 @@
-import { IComment, ICommentResponse } from "../types/comment.interface";
+import { CommentResponseType, LikeStatus } from "../types/comment.interface";
 import { CommentUserMapping } from "../helpers/comment-user-mapping";
 import { CommentRepository } from "../repositories/comment.repository";
 import { UserRepository } from "../repositories/user.repository";
 import { StatusEnum } from "../types/status.enum";
 import { PostRepository } from "../repositories/post.repository";
 import { CreateCommentDto } from "../controller/dto/create-comment.dto";
+import { CommentModel } from "../model/comment.model";
+import { JwtService } from "../helpers/jwtService";
 
 export class CommentService {
   constructor(
     protected repository: CommentRepository,
     protected userRepository: UserRepository,
     protected postRepository: PostRepository,
+    protected jwtService: JwtService,
   ) {}
 
   async createComment(
     postId: string,
     body: CreateCommentDto,
     userId: string,
-  ): Promise<ICommentResponse | boolean> {
+  ): Promise<CommentResponseType | boolean> {
+    const newComment = new CommentModel();
     const post = await this.postRepository.findOne(postId);
     if (!post) {
       return false;
@@ -26,19 +30,14 @@ export class CommentService {
     if (!author) {
       return false;
     }
-    const newComment: IComment = {
-      ...body,
-      id: (+new Date()).toString(),
-      createdAt: new Date(),
-      postId: postId,
-      commentatorId: userId,
-    };
+    newComment.commentatorId = userId;
+    newComment.id = (+new Date()).toString();
+    newComment.postId = postId;
+    newComment.createdAt = new Date();
+    newComment.content = body.content;
 
-    const comment = await this.repository.create(newComment);
-    if (!comment) {
-      return false;
-    }
-    const commentWithUser = CommentUserMapping(newComment, author);
+    const com = await this.repository.updateComment(newComment);
+    const commentWithUser = CommentUserMapping(com, author);
     if (!commentWithUser) {
       return false;
     }
@@ -60,11 +59,64 @@ export class CommentService {
     return StatusEnum.NOT_CONTENT;
   }
 
-  async getOne(id: string): Promise<ICommentResponse | StatusEnum> {
-    const comment = await this.repository.findOne(id);
+  async updateLikes(commentId: string, userId: string, status: LikeStatus) {
+    const comment = await this.repository.findOneWithLike(
+      commentId,
+      userId,
+      false,
+    );
+    if (comment === null) {
+      const commentt = await this.repository.findSmartOne(commentId);
+      if (!commentt) {
+        return StatusEnum.INTERNAL_SERVER;
+      }
+      commentt.likesAuthors.push({
+        userId: userId,
+        status: status,
+      });
+      if (status === LikeStatus.LIKE) {
+        commentt.likesInfo.likesCount += 1;
+      } else if (status === LikeStatus.DISLIKE) {
+        commentt.likesInfo.dislikesCount += 1;
+      }
+      return await this.repository.updateComment(commentt);
+    }
+    if (
+      comment.likesAuthors.length >= 1 &&
+      comment.likesAuthors[0].status !== status
+    ) {
+      comment.likesAuthors[0].status = status;
+      if (status === LikeStatus.LIKE) {
+        comment.likesInfo.likesCount += 1;
+        comment.likesInfo.dislikesCount -= 1;
+      } else if (status === LikeStatus.DISLIKE) {
+        comment.likesInfo.likesCount -= 1;
+        comment.likesInfo.dislikesCount += 1;
+      }
+      return await this.repository.updateComment(comment);
+    }
+  }
+
+  async getOne(
+    id: string,
+    auth: string | undefined,
+  ): Promise<CommentResponseType | StatusEnum> {
+    let userId: { id: string } | null;
+    if (auth) {
+      userId = await this.jwtService.getUserByToken(auth.split(" ")[1]);
+    } else {
+      userId = null;
+    }
+    const comment = userId
+      ? await this.repository.findOneWithLike(id, userId.id, true)
+      : await this.repository.findOne(id);
     if (comment === null) {
       return StatusEnum.NOT_FOUND;
     }
+    if (!userId) {
+      comment.likesAuthors = [];
+    }
+    console.log(comment);
     const user = await this.userRepository.findOneById(comment.commentatorId);
     if (user === null) {
       return StatusEnum.NOT_FOUND;

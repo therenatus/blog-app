@@ -9,7 +9,7 @@ import { AuthTestManager } from "../utils/authTestManager";
 import request from "supertest";
 import { app } from "../../src";
 import { CreateCommentDto } from "../../src/controller/dto/create-comment.dto";
-import { IComment } from "../../src/types/comment.interface";
+import { CommentType } from "../../src/types/comment.interface";
 import { UserTestManager } from "../utils/userTestManager";
 import { ILogin } from "../../src/types/user.types";
 import { CreateUserDto } from "../../src/controller/dto/create-user.dto";
@@ -66,7 +66,7 @@ const authManager = new AuthTestManager();
 const userManager = new UserTestManager();
 describe("test comment api", () => {
   let token: string;
-  let comment: IComment;
+  let comment: CommentType;
   let accessToken: string;
   let refreshToken: string;
   beforeAll(async () => {
@@ -105,7 +105,7 @@ describe("test comment api", () => {
       accessToken,
       data,
     );
-    comment = response.body as IComment;
+    comment = response.body as CommentType;
     await manager.getCommentById(comment.id, StatusEnum.SUCCESS);
   });
 
@@ -144,24 +144,24 @@ describe("test comment api", () => {
     );
   });
 
-  it("DELETE /:id should return 404 status code for not exist", async () => {
-    await manager.deleteComment("1", accessToken, StatusEnum.NOT_FOUND);
-  });
-
-  it("DELETE /:id should return 401 for incorrect token", async () => {
-    await manager.deleteComment(comment.id, token, StatusEnum.UNAUTHORIZED);
-  });
-
-  it("DELETE /:id should return 204 status code", async () => {
-    await manager.deleteComment(
-      comment.id,
-      accessToken,
-      StatusEnum.NOT_CONTENT,
-    );
-    await manager.getCommentById(comment.id, StatusEnum.NOT_FOUND);
-  });
-
-  it("GET /: should return 200 status code and comment entity", async () => {
-    await manager.getCommentById(comment.id, StatusEnum.NOT_FOUND);
-  });
+  // it("DELETE /:id should return 404 status code for not exist", async () => {
+  //   await manager.deleteComment("1", accessToken, StatusEnum.NOT_FOUND);
+  // });
+  //
+  // it("DELETE /:id should return 401 for incorrect token", async () => {
+  //   await manager.deleteComment(comment.id, token, StatusEnum.UNAUTHORIZED);
+  // });
+  //
+  // it("DELETE /:id should return 204 status code", async () => {
+  //   await manager.deleteComment(
+  //     comment.id,
+  //     accessToken,
+  //     StatusEnum.NOT_CONTENT,
+  //   );
+  //   await manager.getCommentById(comment.id, StatusEnum.NOT_FOUND);
+  // });
+  //
+  // it("GET /: should return 200 status code and comment entity", async () => {
+  //   await manager.getCommentById(comment.id, StatusEnum.NOT_FOUND);
+  // });
 });

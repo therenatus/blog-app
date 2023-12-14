@@ -1,16 +1,25 @@
 import { UserDBType } from "../types/user.types";
-import { IComment, ICommentResponse } from "../types/comment.interface";
+import {
+  CommentResponseType,
+  CommentType,
+  LikeStatus,
+} from "../types/comment.interface";
 
 export const CommentUserMapping = (
-  comment: IComment,
+  comment: CommentType,
   author: UserDBType,
-): ICommentResponse => {
-  const { commentatorId, ...newComment } = comment;
+): CommentResponseType => {
+  const { commentatorId, likesAuthors, ...newComment } = comment;
   return {
     ...newComment,
     commentatorInfo: {
       userId: author.accountData.id,
       userLogin: author.accountData.login,
+    },
+    likesInfo: {
+      likesCount: comment.likesInfo.likesCount,
+      dislikesCount: comment.likesInfo.dislikesCount,
+      myStatus: likesAuthors.length ? likesAuthors[0].status : LikeStatus.NONE,
     },
   };
 };
