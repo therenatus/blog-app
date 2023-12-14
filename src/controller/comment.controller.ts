@@ -69,6 +69,6 @@ export class CommentController {
     const userId = req.userId;
     const status = req.body.status;
     await this.service.updateLikes(commentId, userId, status);
-    res.status(StatusEnum.SUCCESS).send();
+    res.status(StatusEnum.NOT_CONTENT).send();
   }
 }

@@ -1,5 +1,6 @@
 import { AuthMiddleware } from "../middleware/auth.middleware";
 import { CreateCommentValidator } from "./validator/create-comment.validator";
+import { LikeStatusValidator } from "./validator/like-status.validator";
 import { InputValidationMiddleware } from "../middleware/inputValidationMiddleware";
 import { commentController } from "../composition-root";
 import express from "express";
@@ -23,7 +24,8 @@ router.delete(
 
 router.put(
   "/:id/like-status",
-  AuthMiddleware,
+  LikeStatusValidator,
+  InputValidationMiddleware,
   commentController.like.bind(commentController),
 );
 
