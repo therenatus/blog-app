@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { CommentService } from "../service/comment.service";
 import { StatusEnum } from "../types/status.enum";
+import { LikeStatus } from "../types/comment.interface";
 
 export class CommentController {
   constructor(protected service: CommentService) {}
@@ -58,7 +59,10 @@ export class CommentController {
     res.status(StatusEnum.NOT_CONTENT).send();
   }
 
-  async like(req: Request, res: Response) {
+  async like(
+    req: Request<{ id: string }, { likeStatus: LikeStatus }>,
+    res: Response,
+  ) {
     if (!req.params.id) {
       return res.status(404).send();
     }
@@ -67,8 +71,12 @@ export class CommentController {
     }
     const commentId = req.params.id;
     const userId = req.userId;
-    const status = req.body.status;
-    await this.service.updateLikes(commentId, userId, status);
+    const status = req.body.likeStatus;
+    const like = await this.service.updateLikes(commentId, userId, status);
+    console.log(like);
+    if (!like) {
+      return res.sendStatus(StatusEnum.NOT_FOUND);
+    }
     res.status(StatusEnum.NOT_CONTENT).send();
   }
 }

@@ -1,4 +1,8 @@
-import { CommentResponseType, LikeStatus } from "../types/comment.interface";
+import {
+  CommentResponseType,
+  CommentType,
+  LikeStatus,
+} from "../types/comment.interface";
 import { CommentUserMapping } from "../helpers/comment-user-mapping";
 import { CommentRepository } from "../repositories/comment.repository";
 import { UserRepository } from "../repositories/user.repository";
@@ -65,10 +69,12 @@ export class CommentService {
       userId,
       false,
     );
+    console.log("comment with like", comment);
     if (comment === null) {
       const commentt = await this.repository.findSmartOne(commentId);
+      console.log("commentt without like", commentt);
       if (!commentt) {
-        return StatusEnum.INTERNAL_SERVER;
+        return false;
       }
       commentt.likesAuthors.push({
         userId: userId,
@@ -95,6 +101,9 @@ export class CommentService {
       }
       return await this.repository.updateComment(comment);
     }
+    if (comment.likesAuthors[0].status === status) {
+      return await this.repository.updateComment(comment);
+    }
   }
 
   async getOne(
@@ -102,14 +111,22 @@ export class CommentService {
     auth: string | undefined,
   ): Promise<CommentResponseType | StatusEnum> {
     let userId: { id: string } | null;
+    let comment: CommentType | null;
     if (auth) {
       userId = await this.jwtService.getUserByToken(auth.split(" ")[1]);
     } else {
       userId = null;
     }
-    const comment = userId
-      ? await this.repository.findOneWithLike(id, userId.id, true)
-      : await this.repository.findOne(id);
+    if (userId) {
+      comment = await this.repository.findOneWithLike(id, userId.id, true);
+    } else {
+      comment = await this.repository.findOne(id);
+    }
+    // const comment = userId
+    //   ? await this.repository.findOneWithLike(id, userId.id, true)
+    //   : await this.repository.findOne(id);
+    // const comment = await this.repository.findOne(id);
+    // const commentWithMyLike = await this.repository.findOneWithLike(id, userId.id, true)
     if (comment === null) {
       return StatusEnum.NOT_FOUND;
     }

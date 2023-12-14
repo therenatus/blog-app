@@ -4,7 +4,7 @@ import { HydratedDocument } from "mongoose";
 
 export class CommentRepository {
   async findOne(id: string): Promise<CommentType | null> {
-    return CommentModel.findOne({ id }, { _id: 0, postId: 0, __v: 0 }).lean();
+    return CommentModel.findOne({ id }).lean();
   }
 
   async findSmartOne(
@@ -18,13 +18,10 @@ export class CommentRepository {
     userId: string,
     shouldLean: boolean,
   ): Promise<HydratedDocument<CommentType> | null> {
-    let query = CommentModel.findOne(
-      {
-        id,
-        "likesAuthors.userId": userId,
-      },
-      { _id: 0, postId: 0, __v: 0 },
-    );
+    let query = CommentModel.findOne({
+      id,
+      "likesAuthors.userId": userId,
+    });
     if (shouldLean) {
       query = query.lean();
     }
