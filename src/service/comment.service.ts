@@ -110,29 +110,15 @@ export class CommentService {
     id: string,
     auth: string | undefined,
   ): Promise<CommentResponseType | StatusEnum> {
-    let userId: { id: string } | null;
-    let comment: CommentType | null;
-    if (auth) {
-      userId = await this.jwtService.getUserByToken(auth.split(" ")[1]);
-    } else {
-      userId = null;
-    }
-    if (userId) {
-      comment = await this.repository.findOneWithLike(id, userId.id, true);
-    } else {
-      comment = await this.repository.findOne(id);
-    }
-    // const comment = userId
-    //   ? await this.repository.findOneWithLike(id, userId.id, true)
-    //   : await this.repository.findOne(id);
-    // const comment = await this.repository.findOne(id);
-    // const commentWithMyLike = await this.repository.findOneWithLike(id, userId.id, true)
+    const userId = await this.getUserIdFromAuth(auth);
+    let comment = await this.getCommentForUser(id, userId);
     if (comment === null) {
       return StatusEnum.NOT_FOUND;
     }
     if (!userId) {
       comment.likesAuthors = [];
     }
+
     const user = await this.userRepository.findOneById(comment.commentatorId);
     if (user === null) {
       return StatusEnum.NOT_FOUND;
@@ -153,5 +139,27 @@ export class CommentService {
       return StatusEnum.NOT_FOUND;
     }
     return StatusEnum.NOT_CONTENT;
+  }
+
+  private async getUserIdFromAuth(
+    auth: string | undefined,
+  ): Promise<{ id: string } | null> {
+    if (auth) {
+      return this.jwtService.getUserByToken(auth.split(" ")[1]);
+    }
+    return null;
+  }
+
+  private async getCommentForUser(
+    id: string,
+    userId: { id: string } | null,
+  ): Promise<CommentType | null> {
+    if (userId) {
+      const query = await this.repository.findOneWithLike(id, userId.id, true);
+      if (query !== null) {
+        return query;
+      }
+    }
+    return this.repository.findOne(id);
   }
 }
