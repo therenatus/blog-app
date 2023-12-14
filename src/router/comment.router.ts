@@ -24,6 +24,7 @@ router.delete(
 
 router.put(
   "/:id/like-status",
+  AuthMiddleware,
   LikeStatusValidator,
   InputValidationMiddleware,
   commentController.like.bind(commentController),
