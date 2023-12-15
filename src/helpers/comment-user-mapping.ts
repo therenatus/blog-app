@@ -11,7 +11,7 @@ export const CommentUserMapping = (
   author: UserDBType,
 ): CommentResponseType => {
   console.log(comment);
-  const { commentatorId, likesAuthors, _id, ...newComment } = comment;
+  const { commentatorId, likesAuthors, _id, postId, ...newComment } = comment;
   return {
     ...newComment,
     commentatorInfo: {
