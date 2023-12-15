@@ -90,9 +90,11 @@ export class PostController {
     if (!req.params.id) {
       return res.status(404).send();
     }
+    const auth = req.headers.authorization;
     const comment = await CommentQueryRepository({
       query: req.query,
       postId: req.params.id,
+      auth,
     });
     if (!comment) {
       return res.status(404).send();
