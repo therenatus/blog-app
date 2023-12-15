@@ -53,7 +53,7 @@ export async function postPagination(
     .sort(sortOptions)
     .skip(+pageSize * (pageNumber - 1))
     .limit(+pageSize)
-    .exec();
+    .lean();
 
   return { data: data, totalCount: total };
 }

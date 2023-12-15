@@ -165,11 +165,15 @@ export class CommentService {
   ): Promise<WithId<CommentType> | null> {
     if (userId) {
       const query = await this.repository.findOneWithLike(id, userId.id, true);
-      console.log("query ", query);
       if (query !== null) {
         return query;
       }
     }
-    return this.repository.findOne(id);
+    const comment = await this.repository.findOne(id);
+    if (comment === null) {
+      return null;
+    }
+    comment.likesAuthors = [];
+    return comment;
   }
 }
