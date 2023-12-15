@@ -30,12 +30,12 @@ export const CommentQueryRepository = async ({ query, postId }: Props) => {
   meta.totalCount = await CommentModel.countDocuments({ postId: postId });
   const data = await CommentModel.find(
     { postId: postId },
-    { projection: { postId: 0, _id: 0 } },
+    { postId: 0, _id: 0, __v: 0 },
   )
     .sort(sortOptions)
     .skip(+pageSize * (pageNumber - 1))
     .limit(+pageSize)
-    .exec();
+    .lean();
   const commentWithUsers = await Promise.all(
     data.map(async (comment) => {
       const author = await userRepository.findOneById(comment.commentatorId);

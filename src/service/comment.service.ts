@@ -100,19 +100,23 @@ export class CommentService {
       comment.likesAuthors.length >= 1 &&
       comment.likesAuthors[0].status !== status
     ) {
-      comment.likesAuthors[0].status = status;
       if (status === LikeStatus.LIKE) {
         comment.likesInfo.likesCount += 1;
         comment.likesInfo.dislikesCount -= 1;
-      } else if (status === LikeStatus.NONE) {
-        if (comment.likesAuthors[0].status === LikeStatus.LIKE) {
-          comment.likesInfo.likesCount -= 1;
-        } else if (comment.likesAuthors[0].status === LikeStatus.DISLIKE) {
-          comment.likesInfo.dislikesCount -= 1;
-        }
+        comment.likesAuthors[0].status = status;
       } else if (status === LikeStatus.DISLIKE) {
         comment.likesInfo.likesCount -= 1;
         comment.likesInfo.dislikesCount += 1;
+        comment.likesAuthors[0].status = status;
+      } else if (status === LikeStatus.NONE) {
+        if (comment.likesAuthors[0].status === LikeStatus.LIKE) {
+          comment.likesInfo.likesCount -= 1;
+          console.log("like", comment.likesInfo.likesCount);
+        } else if (comment.likesAuthors[0].status === LikeStatus.DISLIKE) {
+          comment.likesInfo.dislikesCount -= 1;
+          console.log("dislike", comment.likesInfo.dislikesCount);
+        }
+        comment.likesAuthors = [];
       }
       return await this.repository.updateComment(comment);
     }
