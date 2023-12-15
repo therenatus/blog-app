@@ -4,13 +4,14 @@ import {
   CommentType,
   LikeStatus,
 } from "../types/comment.interface";
+import { WithId } from "mongodb";
 
 export const CommentUserMapping = (
-  comment: CommentType,
+  comment: WithId<CommentType>,
   author: UserDBType,
 ): CommentResponseType => {
   console.log(comment);
-  const { commentatorId, likesAuthors, ...newComment } = comment;
+  const { commentatorId, likesAuthors, _id, ...newComment } = comment;
   return {
     ...newComment,
     commentatorInfo: {

@@ -10,6 +10,7 @@ import { StatusEnum } from "../types/status.enum";
 import { PostRepository } from "../repositories/post.repository";
 import { CreateCommentDto } from "../controller/dto/create-comment.dto";
 import { JwtService } from "../helpers/jwtService";
+import { ObjectId, WithId } from "mongodb";
 
 export class CommentService {
   constructor(
@@ -32,8 +33,9 @@ export class CommentService {
     if (!author) {
       return false;
     }
-    const newComment: CommentType = {
+    const newComment: WithId<CommentType> = {
       ...body,
+      _id: new ObjectId(),
       id: (+new Date()).toString(),
       createdAt: new Date(),
       postId: postId,
@@ -77,7 +79,6 @@ export class CommentService {
       userId,
       false,
     );
-    console.log("comment with like", comment);
     if (comment === null) {
       const commentt = await this.repository.findSmartOne(commentId);
       console.log("commentt without like", commentt);
@@ -119,9 +120,7 @@ export class CommentService {
     auth: string | undefined,
   ): Promise<CommentResponseType | StatusEnum> {
     const userId = await this.getUserIdFromAuth(auth);
-    console.log("userid", userId);
     let comment = await this.getCommentForUser(id, userId);
-    console.log("comment", comment);
     if (comment === null) {
       return StatusEnum.NOT_FOUND;
     }
@@ -130,7 +129,6 @@ export class CommentService {
     }
 
     const user = await this.userRepository.findOneById(comment.commentatorId);
-    console.log("user", user);
     if (user === null) {
       return StatusEnum.NOT_FOUND;
     }
@@ -164,10 +162,10 @@ export class CommentService {
   private async getCommentForUser(
     id: string,
     userId: { id: string } | null,
-  ): Promise<CommentType | null> {
+  ): Promise<WithId<CommentType> | null> {
     if (userId) {
       const query = await this.repository.findOneWithLike(id, userId.id, true);
-      console.log("query", query);
+      console.log("query ", query);
       if (query !== null) {
         return query;
       }
