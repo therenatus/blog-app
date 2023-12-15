@@ -81,7 +81,6 @@ export class CommentService {
     );
     if (comment === null) {
       const commentt = await this.repository.findSmartOne(commentId);
-      console.log("commentt without like", commentt);
       if (!commentt) {
         return false;
       }
@@ -111,10 +110,8 @@ export class CommentService {
       } else if (status === LikeStatus.NONE) {
         if (comment.likesAuthors[0].status === LikeStatus.LIKE) {
           comment.likesInfo.likesCount -= 1;
-          console.log("like", comment.likesInfo.likesCount);
         } else if (comment.likesAuthors[0].status === LikeStatus.DISLIKE) {
           comment.likesInfo.dislikesCount -= 1;
-          console.log("dislike", comment.likesInfo.dislikesCount);
         }
         comment.likesAuthors = [];
       }

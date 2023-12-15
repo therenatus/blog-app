@@ -10,7 +10,6 @@ export const CommentUserMapping = (
   comment: WithId<CommentType>,
   author: UserDBType,
 ): CommentResponseType => {
-  console.log("comment:", comment);
   const { commentatorId, likesAuthors, _id, postId, ...newComment } = comment;
   return {
     ...newComment,

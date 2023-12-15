@@ -54,7 +54,6 @@ export async function postPagination(
     .skip(+pageSize * (pageNumber - 1))
     .limit(+pageSize)
     .lean();
-  console.log(data);
 
   return { data: data, totalCount: total };
 }

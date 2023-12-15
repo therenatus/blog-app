@@ -73,7 +73,6 @@ export class CommentController {
     const userId = req.userId;
     const status = req.body.likeStatus;
     const like = await this.service.updateLikes(commentId, userId, status);
-    console.log(like);
     if (!like) {
       return res.sendStatus(StatusEnum.NOT_FOUND);
     }

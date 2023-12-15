@@ -51,12 +51,9 @@ export const CommentQueryRepository = async ({
   const commentWithUsers = await Promise.all(
     data.map(async (comment) => {
       const author = await userRepository.findOneById(comment.commentatorId);
-      console.log(userId);
       const myLikes = comment.likesAuthors.find(
         (like) => like.userId === userId.id,
       );
-      console.log("coditwion", userId === null || !myLikes);
-      console.log(typeof myLikes);
       if (userId === null || !myLikes) {
         comment.likesAuthors = [];
       }
