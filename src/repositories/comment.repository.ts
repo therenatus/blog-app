@@ -5,7 +5,7 @@ import { WithId } from "mongodb";
 
 export class CommentRepository {
   async findOne(id: string): Promise<WithId<CommentType> | null> {
-    return CommentModel.findOne({ id }, { postId: 0, __v: 0 }).lean();
+    return CommentModel.findOne({ id }, { __v: 0 }).lean();
   }
 
   async findSmartOne(
@@ -24,7 +24,7 @@ export class CommentRepository {
         id,
         "likesAuthors.userId": userId,
       },
-      { postId: 0, __v: 0 },
+      { __v: 0 },
     );
     if (shouldLean) {
       query = query.lean();
