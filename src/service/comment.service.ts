@@ -104,6 +104,12 @@ export class CommentService {
       if (status === LikeStatus.LIKE) {
         comment.likesInfo.likesCount += 1;
         comment.likesInfo.dislikesCount -= 1;
+      } else if (status === LikeStatus.NONE) {
+        if (comment.likesAuthors[0].status === LikeStatus.LIKE) {
+          comment.likesInfo.likesCount -= 1;
+        } else if (comment.likesAuthors[0].status === LikeStatus.DISLIKE) {
+          comment.likesInfo.dislikesCount -= 1;
+        }
       } else if (status === LikeStatus.DISLIKE) {
         comment.likesInfo.likesCount -= 1;
         comment.likesInfo.dislikesCount += 1;
