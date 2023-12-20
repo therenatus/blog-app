@@ -11,7 +11,9 @@ import { PostRepository } from "../repositories/post.repository";
 import { CreateCommentDto } from "../controller/dto/create-comment.dto";
 import { JwtService } from "../helpers/jwtService";
 import { ObjectId, WithId } from "mongodb";
+import { injectable } from "inversify";
 
+@injectable()
 export class CommentService {
   constructor(
     protected repository: CommentRepository,

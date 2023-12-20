@@ -6,7 +6,9 @@ import { TMeta } from "../types/meta.type";
 import { Document } from "mongodb";
 import { TResponseWithData } from "../types/respone-with-data.type";
 import { CreatePostDto } from "../controller/dto/create-post.dto";
+import { injectable } from "inversify";
 
+@injectable()
 export class PostService {
   constructor(
     protected repository: PostRepository,

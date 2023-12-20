@@ -5,7 +5,9 @@ import { SessionModel } from "../model/session.model";
 import { CommentModel } from "../model/comment.model";
 import { IpModel } from "../model/ip.model";
 import { TokenModel } from "../model/token.model";
+import { injectable } from "inversify";
 
+@injectable()
 export class TestingRepository {
   async deleteAll() {
     await BlogModel.deleteMany();

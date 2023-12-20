@@ -3,7 +3,9 @@ import { SecurityService } from "../service/security.service";
 import { ISession } from "../types/session.interface";
 import { WithId } from "mongodb";
 import { StatusEnum } from "../types/status.enum";
+import { injectable } from "inversify";
 
+@injectable()
 export class SecurityController {
   constructor(protected service: SecurityService) {}
 

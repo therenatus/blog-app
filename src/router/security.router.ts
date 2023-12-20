@@ -1,7 +1,9 @@
-import { securityController } from "../composition-root";
+import { container } from "../composition-root";
 import express from "express";
+import { SecurityController } from "../controller/security.controller";
 
 const router = express.Router();
+const securityController = container.resolve(SecurityController);
 
 router.get("/", securityController.getSessions.bind(securityController));
 router.delete(

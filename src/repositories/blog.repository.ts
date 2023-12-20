@@ -5,7 +5,9 @@ import { WithId } from "mongodb";
 import { IPost } from "../types/post.interface";
 import { BlogModel } from "../model/blog.model";
 import { PostModel } from "../model/post.model";
+import { injectable } from "inversify";
 
+@injectable()
 export class BlogRepository {
   async find(
     query: IQuery,

@@ -4,7 +4,9 @@ import { TResponseWithData } from "../types/respone-with-data.type";
 import { ObjectId, WithId } from "mongodb";
 import { UserModel } from "../model/user.model";
 import add from "date-fns/add";
+import { injectable } from "inversify";
 
+@injectable()
 export class UserRepository {
   async getAll(
     query: IQuery,

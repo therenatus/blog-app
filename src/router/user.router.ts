@@ -1,9 +1,11 @@
 import express from "express";
 import { CreateUserValidator } from "./validator/create-user.validator";
 import { InputValidationMiddleware } from "../middleware/inputValidationMiddleware";
-import { userController } from "../composition-root";
+import { container } from "../composition-root";
+import { UserController } from "../controller/user.controller";
 
 const router = express.Router();
+const userController = container.resolve(UserController);
 
 router.get("/", userController.getUsers.bind(userController));
 router.post(

@@ -6,7 +6,9 @@ import { QueryBuilder } from "../helpers/query-builder";
 import { TMeta } from "../types/meta.type";
 import { IPost } from "../types/post.interface";
 import { CreateBlogDto } from "../controller/dto/create-blog.dto";
+import { injectable } from "inversify";
 
+@injectable()
 export class BlogService {
   constructor(protected repository: BlogRepository) {}
 

@@ -1,7 +1,7 @@
 import { RateLimitMiddleware } from "../middleware/rate-limit.middleware";
 import { LoginValidator } from "./validator/login.validator";
 import { InputValidationMiddleware } from "../middleware/inputValidationMiddleware";
-import { authController } from "../composition-root";
+import { container } from "../composition-root";
 import { RecoveryPasswordValidator } from "./validator/recovery-password.validator";
 import { SetNewPasswordValidator } from "./validator/set-newPassword.validator";
 import { AuthMiddleware } from "../middleware/auth.middleware";
@@ -9,8 +9,11 @@ import { CreateUserValidator } from "./validator/create-user.validator";
 import { CheckCodeValidator } from "./validator/check-code.validator";
 import { FindCheckEmailValidator } from "./validator/find-check-email.validator";
 import express from "express";
+import { AuthController } from "../controller/auth.controller";
 
 const router = express.Router();
+
+const authController = container.resolve(AuthController);
 
 router.post(
   "/login",

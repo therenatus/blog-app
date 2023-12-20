@@ -4,7 +4,9 @@ import { RequestType } from "../types/request.type";
 import { ILogin, IRegistration } from "../types/user.types";
 import { StatusEnum } from "../types/status.enum";
 import { UpdatePasswordDto } from "./dto/update-password.dto";
+import { injectable } from "inversify";
 
+@injectable()
 export class AuthController {
   constructor(protected service: AuthService) {}
 

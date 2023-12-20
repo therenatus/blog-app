@@ -3,7 +3,9 @@ import { ISession } from "../types/session.interface";
 import { JwtService } from "../helpers/jwtService";
 import { WithId } from "mongodb";
 import { StatusEnum } from "../types/status.enum";
+import { injectable } from "inversify";
 
+@injectable()
 export class SecurityService {
   constructor(
     protected repository: SessionRepository,

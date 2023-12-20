@@ -7,7 +7,9 @@ import { CommentQueryRepository } from "../repositories/query/comment-query.repo
 import { RequestType } from "../types/request.type";
 import { CreatePostDto } from "./dto/create-post.dto";
 import { CreateCommentDto } from "./dto/create-comment.dto";
+import { injectable } from "inversify";
 
+@injectable()
 export class PostController {
   constructor(
     protected service: PostService,

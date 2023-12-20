@@ -1,7 +1,9 @@
 import { ISession } from "../types/session.interface";
 import { WithId } from "mongodb";
 import { SessionModel } from "../model/session.model";
+import { injectable } from "inversify";
 
+@injectable()
 export class SessionRepository {
   async login(data: ISession): Promise<ISession | null> {
     return SessionModel.create(data);

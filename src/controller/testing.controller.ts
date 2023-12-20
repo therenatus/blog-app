@@ -1,7 +1,9 @@
 import { TestingService } from "../service/testing.service";
 import { Request, Response } from "express";
 import { StatusEnum } from "../types/status.enum";
+import { injectable } from "inversify";
 
+@injectable()
 export class TestingController {
   constructor(protected service: TestingService) {}
 

@@ -8,7 +8,9 @@ import { v4 as uuidv4 } from "uuid";
 import add from "date-fns/add";
 import { IQuery } from "../types/query.interface";
 import { CreateUserDto } from "../controller/dto/create-user.dto";
+import { injectable } from "inversify";
 
+@injectable()
 export class UserService {
   constructor(protected repository: UserRepository) {}
   async getAll(

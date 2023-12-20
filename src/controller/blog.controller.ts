@@ -11,7 +11,9 @@ import { CreateBlogDto } from "./dto/create-blog.dto";
 import { StatusEnum } from "../types/status.enum";
 import { UpdateBlogDto } from "./dto/update-blog.dto";
 import { CreatePostDto } from "./dto/create-post.dto";
+import { injectable } from "inversify";
 
+@injectable()
 export class BlogController {
   constructor(
     protected service: BlogService,

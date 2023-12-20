@@ -2,9 +2,12 @@ import { AuthMiddleware } from "../middleware/auth.middleware";
 import { CreateCommentValidator } from "./validator/create-comment.validator";
 import { LikeStatusValidator } from "./validator/like-status.validator";
 import { InputValidationMiddleware } from "../middleware/inputValidationMiddleware";
-import { commentController } from "../composition-root";
+import { container } from "../composition-root";
 import express from "express";
+import { CommentController } from "../controller/comment.controller";
+
 const router = express.Router();
+const commentController = container.resolve(CommentController);
 
 router.put(
   "/:id",

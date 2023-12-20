@@ -12,7 +12,9 @@ import { CheckToken } from "../helpers/check-token";
 import { TokenRepository } from "../repositories/token.repository";
 import { SessionRepository } from "../repositories/session.repository";
 import { UpdatePasswordDto } from "../controller/dto/update-password.dto";
+import { injectable } from "inversify";
 
+@injectable()
 export class AuthService {
   constructor(
     protected repository: UserRepository,

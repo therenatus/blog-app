@@ -1,11 +1,14 @@
 import { BasicAuthMiddleware } from "../middleware/basicAuth.middleware";
-import { blogController } from "../composition-root";
+import { container } from "../composition-root";
 import { CreateBlogValidator } from "./validator/create-blog.validator";
 import { InputValidationMiddleware } from "../middleware/inputValidationMiddleware";
 import { CreatePostWithParamValidator } from "./validator/create-post-with-param.validator";
 import express from "express";
+import { BlogController } from "../controller/blog.controller";
 
 const router = express.Router();
+
+const blogController = container.resolve(BlogController);
 
 router.post("*", BasicAuthMiddleware);
 router.put("*", BasicAuthMiddleware);

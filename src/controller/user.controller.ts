@@ -6,7 +6,9 @@ import { IPaginationResponse } from "../types/pagination-response.interface";
 import { IUser } from "../types/user.types";
 import { StatusEnum } from "../types/status.enum";
 import { CreateUserDto } from "./dto/create-user.dto";
+import { injectable } from "inversify";
 
+@injectable()
 export class UserController {
   constructor(public service: UserService) {}
   async getUsers(

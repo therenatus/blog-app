@@ -3,7 +3,9 @@ import { TResponseWithData } from "../types/respone-with-data.type";
 import { IPost } from "../types/post.interface";
 import { ObjectId, WithId } from "mongodb";
 import { PostModel } from "../model/post.model";
+import { injectable } from "inversify";
 
+@injectable()
 export class PostRepository {
   async find(
     query: IQuery,

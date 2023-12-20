@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { UserRepository } from "./repositories/user.repository";
 import { UserService } from "./service/user.service";
 import { BlogRepository } from "./repositories/blog.repository";
@@ -21,40 +22,72 @@ import { SecurityController } from "./controller/security.controller";
 import { TestingController } from "./controller/testing.controller";
 import { TestingService } from "./service/testing.service";
 import { TestingRepository } from "./repositories/testing.repository";
+import { Container } from "inversify";
+import { EmailAdapter } from "./adapter/email-adapter";
 
-const userRepository = new UserRepository();
-const blogRepository = new BlogRepository();
-const commentRepository = new CommentRepository();
-const postRepository = new PostRepository();
-const sessionRepository = new SessionRepository();
-const emailManager = new EmailManagers();
-const jwtService = new JwtService();
-const tokenRepository = new TokenRepository();
-const testingRepository = new TestingRepository();
+// const userRepository = new UserRepository();
+// const blogRepository = new BlogRepository();
+// const commentRepository = new CommentRepository();
+// const postRepository = new PostRepository();
+// const sessionRepository = new SessionRepository();
+// const emailManager = new EmailManagers();
+// const jwtService = new JwtService();
+// const tokenRepository = new TokenRepository();
+// const testingRepository = new TestingRepository();
+//
+// const authService = new AuthService(
+//   userRepository,
+//   emailManager,
+//   jwtService,
+//   tokenRepository,
+//   sessionRepository,
+// );
+// const userService = new UserService(userRepository);
+// const blogService = new BlogService(blogRepository);
+// const commentService = new CommentService(
+//   commentRepository,
+//   userRepository,
+//   postRepository,
+//   jwtService,
+// );
+// const postService = new PostService(postRepository, blogRepository);
+// const sessionService = new SecurityService(sessionRepository, jwtService);
+// const testingService = new TestingService(testingRepository);
+//
+// export const authController = new AuthController(authService);
+// export const blogController = new BlogController(blogService, postService);
+// export const commentController = new CommentController(commentService);
+// export const postController = new PostController(postService, commentService);
+// export const securityController = new SecurityController(sessionService);
+// export const userController = new UserController(userService);
+// export const testingController = new TestingController(testingService);
 
-const authService = new AuthService(
-  userRepository,
-  emailManager,
-  jwtService,
-  tokenRepository,
-  sessionRepository,
-);
-const userService = new UserService(userRepository);
-const blogService = new BlogService(blogRepository);
-const commentService = new CommentService(
-  commentRepository,
-  userRepository,
-  postRepository,
-  jwtService,
-);
-const postService = new PostService(postRepository, blogRepository);
-const sessionService = new SecurityService(sessionRepository, jwtService);
-const testingService = new TestingService(testingRepository);
+export const container = new Container();
 
-export const authController = new AuthController(authService);
-export const blogController = new BlogController(blogService, postService);
-export const commentController = new CommentController(commentService);
-export const postController = new PostController(postService, commentService);
-export const securityController = new SecurityController(sessionService);
-export const userController = new UserController(userService);
-export const testingController = new TestingController(testingService);
+container.bind<AuthController>(AuthController).to(AuthController);
+container.bind<BlogController>(BlogController).to(BlogController);
+container.bind<CommentController>(CommentController).to(CommentController);
+container.bind<PostController>(PostController).to(PostController);
+container.bind<SecurityController>(SecurityController).to(SecurityController);
+container.bind<TestingController>(TestingController).to(TestingController);
+container.bind<UserController>(UserController).to(UserController);
+
+container.bind<UserRepository>(UserRepository).to(UserRepository);
+container.bind<BlogRepository>(BlogRepository).to(BlogRepository);
+container.bind<CommentRepository>(CommentRepository).to(CommentRepository);
+container.bind<PostRepository>(PostRepository).to(PostRepository);
+container.bind<SessionRepository>(SessionRepository).to(SessionRepository);
+container.bind<TestingRepository>(TestingRepository).to(TestingRepository);
+container.bind<TokenRepository>(TokenRepository).to(TokenRepository);
+
+container.bind<AuthService>(AuthService).to(AuthService);
+container.bind<BlogService>(BlogService).to(BlogService);
+container.bind<CommentService>(CommentService).to(CommentService);
+container.bind<PostService>(PostService).to(PostService);
+container.bind<SecurityService>(SecurityService).to(SecurityService);
+container.bind<TestingService>(TestingService).to(TestingService);
+container.bind<UserService>(UserService).to(UserService);
+container.bind<EmailManagers>(EmailManagers).to(EmailManagers);
+container.bind<JwtService>(JwtService).to(JwtService);
+
+container.bind<EmailAdapter>(EmailAdapter).to(EmailAdapter);

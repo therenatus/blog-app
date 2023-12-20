@@ -1,11 +1,12 @@
 import { EmailAdapter } from "../adapter/email-adapter";
 import { UserDBType } from "../types/user.types";
+import { injectable } from "inversify";
 
-const emailAdapter = new EmailAdapter();
-
+@injectable()
 export class EmailManagers {
+  constructor(protected emailAdapter: EmailAdapter) {}
   async sendPasswordRecoveryMessages(user: UserDBType) {
-    await emailAdapter.sendMail(
+    await this.emailAdapter.sendMail(
       user.accountData.email,
       "Reset password",
       recoveryPassword(user.emailConfirmation.confirmationCode),
@@ -13,7 +14,7 @@ export class EmailManagers {
   }
 
   async sendConfirmMessages(user: UserDBType) {
-    await emailAdapter.sendMail(
+    await this.emailAdapter.sendMail(
       user.accountData.email,
       "Please, confirm email",
       confirmMessage(user.emailConfirmation.confirmationCode),
