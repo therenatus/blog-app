@@ -8,14 +8,14 @@ export const CheckCodeValidator = [
     .custom(async (code) => {
       const user = await UserModel.findOne({
         "emailConfirmation.confirmationCode": code,
-      });
+      }).exec();
       if (!user) {
         throw new Error("User not found");
       }
       if (user.emailConfirmation.isConfirmed) {
-        throw new Error("User is confirmed");
+        throw new Error("User is already confirmed");
       }
-      if (user.emailConfirmation.expirationDate < new Date()) {
+      if (user.emailConfirmation.expirationDate > new Date()) {
         throw new Error("Link is expired");
       }
       return true;

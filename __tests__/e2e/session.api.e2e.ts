@@ -6,8 +6,8 @@ import { UserTestManager } from "../utils/userTestManager";
 import { CreateUserDto } from "../../src/controller/dto/create-user.dto";
 import { AuthTestManager } from "../utils/authTestManager";
 import { StatusEnum } from "../../src/types/status.enum";
-import { SessionResponseType } from "../../src/types/session.interface";
-import { ILogin } from "../../src/types/user.types";
+import { SessionResponseType } from "../../src/types/session.type";
+import { LoginType } from "../../src/types/user.types";
 import mongoose from "mongoose";
 
 if (!process.env.MONGO_URI) {
@@ -31,7 +31,7 @@ const user2: CreateUserDto = {
   email: "1@gmail.com",
 };
 
-const loginData: ILogin = {
+const loginData: LoginType = {
   loginOrEmail: "admin",
   password: "123456",
 };

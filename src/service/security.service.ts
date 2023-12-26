@@ -1,5 +1,5 @@
 import { SessionRepository } from "../repositories/session.repository";
-import { ISession } from "../types/session.interface";
+import { SessionType } from "../types/session.type";
 import { JwtService } from "../helpers/jwtService";
 import { WithId } from "mongodb";
 import { StatusEnum } from "../types/status.enum";
@@ -11,7 +11,7 @@ export class SecurityService {
     protected repository: SessionRepository,
     protected jwtService: JwtService,
   ) {}
-  async getAll(token: string): Promise<WithId<ISession>[]> {
+  async getAll(token: string): Promise<WithId<SessionType>[]> {
     const decode = await this.jwtService.getUserByToken(token);
     return await this.repository.getAll(decode.id);
   }

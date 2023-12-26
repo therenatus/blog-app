@@ -1,11 +1,15 @@
-import { ISession } from "../types/session.interface";
+import { SessionType } from "../types/session.type";
 import { WithId } from "mongodb";
 import { SessionModel } from "../model/session.model";
 import { injectable } from "inversify";
+import { HydratedDocument } from "mongoose";
 
 @injectable()
 export class SessionRepository {
-  async login(data: ISession): Promise<ISession | null> {
+  async save(session: HydratedDocument<SessionType>) {
+    return session.save();
+  }
+  async login(data: SessionType): Promise<SessionType | null> {
     return SessionModel.create(data);
   }
 
@@ -14,7 +18,7 @@ export class SessionRepository {
     return !session;
   }
 
-  async getAll(userId: string): Promise<WithId<ISession>[]> {
+  async getAll(userId: string): Promise<WithId<SessionType>[]> {
     return await SessionModel.find({ userId }, { _id: 0, userId: 0 }).exec();
   }
 
@@ -31,7 +35,9 @@ export class SessionRepository {
     return deletedCount !== 0;
   }
 
-  async findOne(deviceId: string): Promise<ISession | null> {
+  async findOne(
+    deviceId: string,
+  ): Promise<HydratedDocument<SessionType> | null> {
     return SessionModel.findOne({ deviceId });
   }
 

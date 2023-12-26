@@ -1,4 +1,4 @@
-import { ILogin } from "../../src/types/user.types";
+import { LoginType } from "../../src/types/user.types";
 import { StatusEnum } from "../../src/types/status.enum";
 import request from "supertest";
 import { app } from "../../src";
@@ -12,10 +12,10 @@ export class AuthTestManager {
     return `Basic ${token}`;
   }
 
-  async login(data: ILogin, expectedStatusCode: StatusEnum) {
+  async login(data: LoginType, expectedStatusCode: StatusEnum) {
     let loginRes;
     const response = await request(app)
-      .post(`/api/${RoutePath.auth}/login`)
+      .post(`/api${RoutePath.auth}/login`)
       .send(data)
       .expect(expectedStatusCode);
 

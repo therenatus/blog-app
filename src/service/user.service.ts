@@ -2,20 +2,19 @@ import { QueryBuilder } from "../helpers/query-builder";
 import { TMeta } from "../types/meta.type";
 import { UserRepository } from "../repositories/user.repository";
 import { TResponseWithData } from "../types/respone-with-data.type";
-import { IUser, UserDBType } from "../types/user.types";
+import { UserType, UserDBType } from "../types/user.types";
 import { generateHash } from "../helpers/hashPassword";
-import { v4 as uuidv4 } from "uuid";
-import add from "date-fns/add";
 import { IQuery } from "../types/query.interface";
 import { CreateUserDto } from "../controller/dto/create-user.dto";
 import { injectable } from "inversify";
+import { UserModel } from "../model/user.model";
 
 @injectable()
 export class UserService {
   constructor(protected repository: UserRepository) {}
   async getAll(
     query: IQuery,
-  ): Promise<TResponseWithData<IUser[], TMeta, "items", "meta">> {
+  ): Promise<TResponseWithData<UserType[], TMeta, "items", "meta">> {
     const querySearch = QueryBuilder(query);
     const meta: TMeta = {
       ...querySearch,
@@ -26,27 +25,14 @@ export class UserService {
     return { items: data, meta: meta };
   }
 
-  async create(body: CreateUserDto): Promise<IUser | null> {
-    const hashPassword = await generateHash(body.password);
-    const user: UserDBType = {
-      accountData: {
-        id: (+new Date()).toString(),
-        hashPassword,
-        email: body.email,
-        login: body.login,
-        createdAt: new Date(),
-      },
-      emailConfirmation: {
-        confirmationCode: uuidv4(),
-        expirationDate: add(new Date(), {
-          hours: 1,
-        }),
-        isConfirmed: true,
-      },
-    };
-    const newUser = await this.repository.create(user);
-    if (!newUser) return null;
-    return newUser.accountData;
+  async create(body: CreateUserDto): Promise<UserType | null> {
+    const { email, login, password } = body;
+    const hashPassword = await generateHash(password);
+    const user = UserModel.makeInstance(login, email, hashPassword);
+
+    const createResult = await this.repository.save(user);
+    if (!user) return null;
+    return createResult.accountData;
   }
 
   async delete(id: string): Promise<boolean> {
@@ -54,6 +40,6 @@ export class UserService {
   }
 
   async getOne(id: string): Promise<UserDBType | null> {
-    return await this.repository.getOne(id);
+    return this.repository.getOne(id);
   }
 }

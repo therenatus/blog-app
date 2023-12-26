@@ -11,7 +11,7 @@ import { app } from "../../src";
 import { CreateCommentDto } from "../../src/controller/dto/create-comment.dto";
 import { CommentType } from "../../src/types/comment.interface";
 import { UserTestManager } from "../utils/userTestManager";
-import { ILogin } from "../../src/types/user.types";
+import { LoginType } from "../../src/types/user.types";
 import { CreateUserDto } from "../../src/controller/dto/create-user.dto";
 import mongoose from "mongoose";
 
@@ -45,7 +45,7 @@ const user: CreateUserDto = {
   email: "ss@gmail.com",
 };
 
-const login: ILogin = {
+const login: LoginType = {
   loginOrEmail: "admin",
   password: "123456",
 };

@@ -1,6 +1,6 @@
 import request from "supertest";
 import { app } from "../../src";
-import { ISession } from "../../src/types/session.interface";
+import { SessionType } from "../../src/types/session.type";
 import { RoutePath } from "../../src/router/route.path";
 import { StatusEnum } from "../../src/types/status.enum";
 
@@ -9,7 +9,7 @@ const getRequest = () => {
 };
 
 export class SessionTestManager {
-  async createSession(data: ISession) {
+  async createSession(data: SessionType) {
     await getRequest()
       .post(`/api/${RoutePath.security}`)
       .send(data)

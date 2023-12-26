@@ -3,7 +3,7 @@ import { RequestType } from "../types/request.type";
 import { IQuery } from "../types/query.interface";
 import { Response } from "express";
 import { IPaginationResponse } from "../types/pagination-response.interface";
-import { IUser } from "../types/user.types";
+import { UserType } from "../types/user.types";
 import { StatusEnum } from "../types/status.enum";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { injectable } from "inversify";
@@ -13,10 +13,10 @@ export class UserController {
   constructor(public service: UserService) {}
   async getUsers(
     req: RequestType<null, null, IQuery>,
-    res: Response<IPaginationResponse<IUser[]>>,
+    res: Response<IPaginationResponse<UserType[]>>,
   ) {
     const { items, meta } = await this.service.getAll(req.query);
-    const users: IPaginationResponse<IUser[]> = {
+    const users: IPaginationResponse<UserType[]> = {
       pageSize: meta.pageSize,
       page: meta.pageNumber,
       pagesCount: Math.ceil(meta.totalCount / meta.pageSize),
@@ -26,7 +26,10 @@ export class UserController {
     res.status(StatusEnum.SUCCESS).send(users);
   }
 
-  async createUser(req: RequestType<any, CreateUserDto>, res: Response<IUser>) {
+  async createUser(
+    req: RequestType<any, CreateUserDto>,
+    res: Response<UserType>,
+  ) {
     const user = await this.service.create(req.body);
     if (!user) {
       return res.sendStatus(StatusEnum.INTERNAL_SERVER);

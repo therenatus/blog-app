@@ -1,16 +1,17 @@
 import { IQuery } from "../types/query.interface";
-import { IUser, UserDBType } from "../types/user.types";
+import { UserType, UserDBMethodsType, UserDBType } from "../types/user.types";
 import { TResponseWithData } from "../types/respone-with-data.type";
 import { ObjectId, WithId } from "mongodb";
 import { UserModel } from "../model/user.model";
 import add from "date-fns/add";
 import { injectable } from "inversify";
+import { HydratedDocument } from "mongoose";
 
 @injectable()
 export class UserRepository {
   async getAll(
     query: IQuery,
-  ): Promise<TResponseWithData<IUser[], number, "data", "totalCount">> {
+  ): Promise<TResponseWithData<UserType[], number, "data", "totalCount">> {
     const users = await FindAllUsers(query);
     const totalCount = users.totalCount;
     const userMap = users.data.map((user) => {
@@ -20,19 +21,25 @@ export class UserRepository {
     return { data: userMap, totalCount };
   }
 
-  async getOne(search: string): Promise<UserDBType | null> {
+  async getOne(
+    search: string,
+  ): Promise<HydratedDocument<UserDBType, UserDBMethodsType> | null> {
     return UserModel.findOne({
       $or: [{ "accountData.email": search }, { "accountData.login": search }],
     });
   }
 
-  async getOneByCode(code: string): Promise<UserDBType | null> {
-    return await UserModel.findOne({
+  async getOneByCode(
+    code: string,
+  ): Promise<HydratedDocument<UserDBType, UserDBMethodsType> | null> {
+    return UserModel.findOne({
       "emailConfirmation.confirmationCode": code,
-    }).exec();
+    });
   }
 
-  async getOneByEmail(email: string): Promise<UserDBType | null> {
+  async getOneByEmail(
+    email: string,
+  ): Promise<HydratedDocument<UserDBType> | null> {
     return UserModel.findOne({ "accountData.email": email });
   }
 
@@ -50,12 +57,12 @@ export class UserRepository {
     });
   }
 
-  async create(body: UserDBType): Promise<UserDBType | null> {
-    const user = await UserModel.create(body);
-    return UserModel.findById(user._id, {
-      "accountData.hashPassword": 0,
-    }).exec();
-  }
+  // async create(body: UserDBType): Promise<UserDBType | null> {
+  //   const user = await UserModel.create(body);
+  //   return UserModel.findById(user._id, {
+  //     "accountData.hashPassword": 0,
+  //   }).exec();
+  // }
 
   async delete(id: string): Promise<any> {
     const { deletedCount } = await UserModel.deleteOne({
@@ -106,6 +113,13 @@ export class UserRepository {
       { "accountData.hashPassword": newPassword },
     );
     return matchedCount !== 0;
+  }
+
+  async save(user: HydratedDocument<UserDBType>): Promise<any> {
+    const savedUser = await user.save();
+    return await UserModel.findById(savedUser._id)
+      .select("-accountData.hashPassword")
+      .exec();
   }
 }
 

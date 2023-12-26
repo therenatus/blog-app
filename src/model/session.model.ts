@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { ISession } from "../types/session.interface";
+import { SessionType } from "../types/session.type";
 
-export const SessionSchema = new mongoose.Schema<ISession>({
+export const SessionSchema = new mongoose.Schema<SessionType>({
   ip: { type: String, require },
   title: { type: String, require },
   deviceId: { type: String, require },
@@ -9,4 +9,7 @@ export const SessionSchema = new mongoose.Schema<ISession>({
   lastActiveDate: { type: Date, require },
 });
 
-export const SessionModel = mongoose.model<ISession>("sessions", SessionSchema);
+export const SessionModel = mongoose.model<SessionType>(
+  "sessions",
+  SessionSchema,
+);

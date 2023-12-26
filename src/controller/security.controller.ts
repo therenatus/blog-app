@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { SecurityService } from "../service/security.service";
-import { ISession } from "../types/session.interface";
+import { SessionType } from "../types/session.type";
 import { WithId } from "mongodb";
 import { StatusEnum } from "../types/status.enum";
 import { injectable } from "inversify";
@@ -14,7 +14,8 @@ export class SecurityController {
     if (!refreshToken) {
       return res.status(401).send();
     }
-    const devices: WithId<ISession>[] = await this.service.getAll(refreshToken);
+    const devices: WithId<SessionType>[] =
+      await this.service.getAll(refreshToken);
     res.status(200).send(devices);
   }
 

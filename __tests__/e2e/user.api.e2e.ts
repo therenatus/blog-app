@@ -4,7 +4,7 @@ import { RoutePath } from "../../src/router/route.path";
 import { CreateUserDto } from "../../src/controller/dto/create-user.dto";
 import { UserTestManager } from "../utils/userTestManager";
 import { StatusEnum } from "../../src/types/status.enum";
-import { IUser } from "../../src/types/user.types";
+import { UserType } from "../../src/types/user.types";
 import { AuthTestManager } from "../utils/authTestManager";
 import mongoose from "mongoose";
 
@@ -34,7 +34,7 @@ const users: CreateUserDto[] = [
 ];
 
 describe("test api for user", () => {
-  let createdUsers: IUser[] = [];
+  let createdUsers: UserType[] = [];
   beforeAll(async () => {
     await mongoose.connect(mongoURI);
     await getRequest().delete(`/api/${RoutePath.test}`);

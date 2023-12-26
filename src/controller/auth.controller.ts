@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AuthService } from "../service/auth.service";
 import { RequestType } from "../types/request.type";
-import { ILogin, IRegistration } from "../types/user.types";
+import { LoginType, RegistrationType } from "../types/user.types";
 import { StatusEnum } from "../types/status.enum";
 import { UpdatePasswordDto } from "./dto/update-password.dto";
 import { injectable } from "inversify";
@@ -10,7 +10,7 @@ import { injectable } from "inversify";
 export class AuthController {
   constructor(protected service: AuthService) {}
 
-  async login(req: RequestType<any, ILogin>, res: Response) {
+  async login(req: RequestType<any, LoginType>, res: Response) {
     const data = await this.service.login(
       req.body,
       req.ip,
@@ -89,7 +89,7 @@ export class AuthController {
     res.status(StatusEnum.SUCCESS).send(userResponse);
   }
 
-  async registration(req: RequestType<any, IRegistration>, res: Response) {
+  async registration(req: RequestType<any, RegistrationType>, res: Response) {
     await this.service.registration(req.body);
     return res.sendStatus(StatusEnum.NOT_CONTENT);
   }

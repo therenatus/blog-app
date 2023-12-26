@@ -24,43 +24,9 @@ import { TestingService } from "./service/testing.service";
 import { TestingRepository } from "./repositories/testing.repository";
 import { Container } from "inversify";
 import { EmailAdapter } from "./adapter/email-adapter";
-
-// const userRepository = new UserRepository();
-// const blogRepository = new BlogRepository();
-// const commentRepository = new CommentRepository();
-// const postRepository = new PostRepository();
-// const sessionRepository = new SessionRepository();
-// const emailManager = new EmailManagers();
-// const jwtService = new JwtService();
-// const tokenRepository = new TokenRepository();
-// const testingRepository = new TestingRepository();
-//
-// const authService = new AuthService(
-//   userRepository,
-//   emailManager,
-//   jwtService,
-//   tokenRepository,
-//   sessionRepository,
-// );
-// const userService = new UserService(userRepository);
-// const blogService = new BlogService(blogRepository);
-// const commentService = new CommentService(
-//   commentRepository,
-//   userRepository,
-//   postRepository,
-//   jwtService,
-// );
-// const postService = new PostService(postRepository, blogRepository);
-// const sessionService = new SecurityService(sessionRepository, jwtService);
-// const testingService = new TestingService(testingRepository);
-//
-// export const authController = new AuthController(authService);
-// export const blogController = new BlogController(blogService, postService);
-// export const commentController = new CommentController(commentService);
-// export const postController = new PostController(postService, commentService);
-// export const securityController = new SecurityController(sessionService);
-// export const userController = new UserController(userService);
-// export const testingController = new TestingController(testingService);
+import { AuthBusinessLayer } from "./buisness/auth.business";
+import { TokenBusinessLayer } from "./buisness/token.business";
+import { SessionBusinessLayer } from "./buisness/session.business";
 
 export const container = new Container();
 
@@ -89,5 +55,11 @@ container.bind<TestingService>(TestingService).to(TestingService);
 container.bind<UserService>(UserService).to(UserService);
 container.bind<EmailManagers>(EmailManagers).to(EmailManagers);
 container.bind<JwtService>(JwtService).to(JwtService);
+
+container.bind<AuthBusinessLayer>(AuthBusinessLayer).to(AuthBusinessLayer);
+container.bind<TokenBusinessLayer>(TokenBusinessLayer).to(TokenBusinessLayer);
+container
+  .bind<SessionBusinessLayer>(SessionBusinessLayer)
+  .to(SessionBusinessLayer);
 
 container.bind<EmailAdapter>(EmailAdapter).to(EmailAdapter);
