@@ -9,7 +9,7 @@ import { ObjectId } from "mongodb";
 import { v4 as uuidv4 } from "uuid";
 import { generateHash } from "../helpers/hashPassword";
 import { EmailManagers } from "../managers/email-managers";
-import { TokenResponseType } from "../types/token-response.interface";
+import { TokenResponseType } from "../types/token-response.type";
 import { JwtService } from "../helpers/jwtService";
 import { UpdatePasswordDto } from "../controller/dto/update-password.dto";
 import { injectable } from "inversify";

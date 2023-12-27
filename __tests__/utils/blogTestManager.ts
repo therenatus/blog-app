@@ -3,7 +3,7 @@ import { app } from "../../src";
 import { CreateBlogDto } from "../../src/controller/dto/create-blog.dto";
 import { StatusEnum } from "../../src/types/status.enum";
 import { RoutePath } from "../../src/router/route.path";
-import { IBlog } from "../../src/types/blog.interface";
+import { BlogType } from "../../src/types/blog.type";
 import { IPaginationResponse } from "../../src/types/pagination-response.interface";
 import { UpdateBlogDto } from "../../src/controller/dto/update-blog.dto";
 
@@ -47,7 +47,7 @@ export class BlogTestManager {
       .expect(StatusEnum.SUCCESS);
 
     if (response.status === StatusEnum.SUCCESS) {
-      const data = response.body as IPaginationResponse<IBlog>;
+      const data = response.body as IPaginationResponse<BlogType>;
       this._checkResponseDatas(data);
     }
   }
@@ -58,7 +58,7 @@ export class BlogTestManager {
       .expect(expectedStatusCode);
 
     if (response.status && expectedStatusCode === StatusEnum.SUCCESS) {
-      const data = response.body as IPaginationResponse<IBlog>;
+      const data = response.body as IPaginationResponse<BlogType>;
       this._checkResponseDatas(data);
     }
   }
@@ -83,7 +83,7 @@ export class BlogTestManager {
       .expect(expectedStatusCode);
   }
 
-  private _checkResponseData(data: IBlog) {
+  private _checkResponseData(data: BlogType) {
     expect(data).toEqual(
       expect.objectContaining({
         createdAt: expect.any(String),
@@ -96,7 +96,7 @@ export class BlogTestManager {
     );
   }
 
-  private _checkResponseDatas(data: IPaginationResponse<IBlog>) {
+  private _checkResponseDatas(data: IPaginationResponse<BlogType>) {
     expect(data).toEqual(
       expect.objectContaining({
         pageSize: expect.any(Number),

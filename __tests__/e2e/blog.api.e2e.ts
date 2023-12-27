@@ -2,7 +2,7 @@ import request from "supertest";
 import { app } from "../../src";
 import { RoutePath } from "../../src/router/route.path";
 import { StatusEnum } from "../../src/types/status.enum";
-import { IBlog } from "../../src/types/blog.interface";
+import { BlogType } from "../../src/types/blog.type";
 import { CreateBlogDto } from "../../src/controller/dto/create-blog.dto";
 import { BlogTestManager } from "../utils/blogTestManager";
 import { AuthTestManager } from "../utils/authTestManager";
@@ -35,7 +35,7 @@ const newData: UpdateBlogDto = {
 const incorrectToken =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE2OTg1NTk2NDU4MTQiLCJkZXZpY2VJZCI6IjBiMTA1MDE0LTQwOTQtNGJjMy05MDYxLWU5YjJlOGYyNTAwZSIsImlhdCI6MTY5ODU1OTY0NywiZXhwIjoxNjk4NTYwODQ3fQ.KEiroD-VWl3ZvPUqOk31G462epxPttYWYUuHIi3yaGI";
 describe("/api/blogs/ test for blog api", () => {
-  let blog1: IBlog;
+  let blog1: BlogType;
   let token: string;
 
   beforeAll(async () => {

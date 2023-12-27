@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { BlogService } from "../service/blog.service";
 import { IPaginationResponse } from "../types/pagination-response.interface";
-import { IBlog } from "../types/blog.interface";
+import { BlogType } from "../types/blog.type";
 import { IPost } from "../types/post.interface";
 import { PostService } from "../service/post.service";
 import { RequestType } from "../types/request.type";
@@ -22,12 +22,12 @@ export class BlogController {
 
   async getBlogs(
     req: RequestType<{}, {}, IQuery>,
-    res: Response<IPaginationResponse<IBlog[]>>,
+    res: Response<IPaginationResponse<BlogType[]>>,
   ) {
     const data = await this.service.getAll(req.query);
     const { items, meta } = data;
 
-    const blogsResponse: IPaginationResponse<IBlog[]> = {
+    const blogsResponse: IPaginationResponse<BlogType[]> = {
       pageSize: meta.pageSize,
       page: meta.pageNumber,
       pagesCount: Math.ceil(meta.totalCount / meta.pageSize),
@@ -37,7 +37,10 @@ export class BlogController {
     return res.status(StatusEnum.SUCCESS).send(blogsResponse);
   }
 
-  async createBlog(req: RequestType<{}, CreateBlogDto>, res: Response<IBlog>) {
+  async createBlog(
+    req: RequestType<{}, CreateBlogDto>,
+    res: Response<BlogType>,
+  ) {
     const blog = await this.service.create(req.body);
     if (!blog) {
       return res.sendStatus(StatusEnum.NOT_CONTENT);
@@ -47,7 +50,7 @@ export class BlogController {
 
   async getBlogById(
     req: RequestType<URIParamsInterface>,
-    res: Response<IBlog>,
+    res: Response<BlogType>,
   ) {
     if (!req.params.id) {
       return res.sendStatus(StatusEnum.NOT_FOUND);

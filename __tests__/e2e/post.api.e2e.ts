@@ -8,7 +8,7 @@ import { BlogTestManager } from "../utils/blogTestManager";
 import { CreateBlogDto } from "../../src/controller/dto/create-blog.dto";
 import { StatusEnum } from "../../src/types/status.enum";
 import { IPost } from "../../src/types/post.interface";
-import { IBlog } from "../../src/types/blog.interface";
+import { BlogType } from "../../src/types/blog.type";
 import mongoose from "mongoose";
 
 if (!process.env.MONGO_URI) {
@@ -49,7 +49,7 @@ const incorrectToken =
 describe("/api/posts test post api", () => {
   let token: string;
   let post: IPost;
-  let blog: IBlog;
+  let blog: BlogType;
   beforeAll(async () => {
     await mongoose.connect(mongoURI);
     token = authManager.basicLogin();

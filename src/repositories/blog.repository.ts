@@ -1,22 +1,28 @@
 import { IQuery } from "../types/query.interface";
-import { IBlog } from "../types/blog.interface";
+import { BlogType } from "../types/blog.type";
 import { TResponseWithData } from "../types/respone-with-data.type";
 import { WithId } from "mongodb";
 import { IPost } from "../types/post.interface";
 import { BlogModel } from "../model/blog.model";
 import { PostModel } from "../model/post.model";
 import { injectable } from "inversify";
+import { HydratedDocument } from "mongoose";
 
 @injectable()
 export class BlogRepository {
+  async save(blog: HydratedDocument<BlogType>): Promise<BlogType> {
+    return blog.save();
+  }
   async find(
     query: IQuery,
-  ): Promise<TResponseWithData<WithId<IBlog>[], number, "data", "totalCount">> {
+  ): Promise<
+    TResponseWithData<WithId<BlogType>[], number, "data", "totalCount">
+  > {
     return await dataPagination(query);
   }
 
-  async findOne(id: string): Promise<IBlog | null> {
-    return await BlogModel.findOne({ id: id }, { _id: 0 }).exec();
+  async findOne(id: string): Promise<HydratedDocument<BlogType> | null> {
+    return BlogModel.findOne({ id: id }, { _id: 0 });
   }
 
   async findBlogsPost(
@@ -26,7 +32,7 @@ export class BlogRepository {
     return await postDataPagination(query, id);
   }
 
-  async create(body: IBlog): Promise<IBlog | null> {
+  async create(body: BlogType): Promise<BlogType | null> {
     return await BlogModel.create(body);
   }
 
@@ -43,7 +49,9 @@ export class BlogRepository {
 
 export async function dataPagination(
   query: IQuery,
-): Promise<TResponseWithData<WithId<IBlog>[], number, "data", "totalCount">> {
+): Promise<
+  TResponseWithData<WithId<BlogType>[], number, "data", "totalCount">
+> {
   const { sortDirection, pageSize, pageNumber, sortBy } = query;
   let filter: any = {};
   const sortOptions: { [key: string]: any } = {};

@@ -1,4 +1,4 @@
-import { TokenResponseType } from "../types/token-response.interface";
+import { TokenResponseType } from "../types/token-response.type";
 import { UserRepository } from "../repositories/user.repository";
 import { EmailManagers } from "../managers/email-managers";
 import { JwtService } from "../helpers/jwtService";

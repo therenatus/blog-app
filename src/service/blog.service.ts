@@ -1,4 +1,4 @@
-import { IBlog } from "../types/blog.interface";
+import { BlogType } from "../types/blog.type";
 import { BlogRepository } from "../repositories/blog.repository";
 import { TResponseWithData } from "../types/respone-with-data.type";
 import { Document } from "mongodb";
@@ -7,14 +7,14 @@ import { TMeta } from "../types/meta.type";
 import { IPost } from "../types/post.interface";
 import { CreateBlogDto } from "../controller/dto/create-blog.dto";
 import { injectable } from "inversify";
+import { BlogModel } from "../model/blog.model";
 
 @injectable()
 export class BlogService {
   constructor(protected repository: BlogRepository) {}
-
   async getAll(
     query: any,
-  ): Promise<TResponseWithData<IBlog[], TMeta, "items", "meta">> {
+  ): Promise<TResponseWithData<BlogType[], TMeta, "items", "meta">> {
     const querySearch = QueryBuilder(query);
     const meta: TMeta = {
       ...querySearch,
@@ -28,19 +28,13 @@ export class BlogService {
     return { items: data, meta: meta };
   }
 
-  async getOne(id: string): Promise<IBlog | null> {
+  async getOne(id: string): Promise<BlogType | null> {
     return await this.repository.findOne(id);
   }
 
-  async create(body: CreateBlogDto): Promise<IBlog | null> {
-    const date = new Date();
-    const newBlog: IBlog = {
-      ...body,
-      createdAt: date,
-      id: (+date).toString(),
-      isMembership: false,
-    };
-    return await this.repository.create(newBlog);
+  async create(body: CreateBlogDto): Promise<BlogType | null> {
+    const blog = BlogModel.makeInstance(body);
+    return this.repository.save(blog);
   }
 
   async findBlogsPost(
@@ -67,7 +61,7 @@ export class BlogService {
     return { items: data, meta: meta };
   }
 
-  async update(id: string, body: Partial<IBlog>): Promise<boolean> {
+  async update(id: string, body: Partial<BlogType>): Promise<boolean> {
     return await this.repository.updateOne(id, body);
   }
 
