@@ -9,7 +9,7 @@ import { AuthTestManager } from "../utils/authTestManager";
 import request from "supertest";
 import { app } from "../../src";
 import { CreateCommentDto } from "../../src/controller/dto/create-comment.dto";
-import { CommentType } from "../../src/types/comment.interface";
+import { CommentType } from "../../src/types/comment.type";
 import { UserTestManager } from "../utils/userTestManager";
 import { LoginType } from "../../src/types/user.types";
 import { CreateUserDto } from "../../src/controller/dto/create-user.dto";

@@ -3,14 +3,15 @@ import {
   CommentResponseType,
   CommentType,
   LikeStatus,
-} from "../types/comment.interface";
-import { WithId } from "mongodb";
+} from "../types/comment.type";
 
 export const CommentUserMapping = (
-  comment: WithId<CommentType>,
+  comment: CommentType,
   author: UserDBType,
 ): CommentResponseType => {
-  const { commentatorId, likesAuthors, _id, postId, ...newComment } = comment;
+  const simpleObject = JSON.parse(JSON.stringify(comment));
+  const { commentatorId, likesAuthors, _id, __v, postId, ...newComment } =
+    simpleObject;
   return {
     ...newComment,
     commentatorInfo: {
