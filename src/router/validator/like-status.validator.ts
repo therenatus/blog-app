@@ -1,5 +1,5 @@
 import { body } from "express-validator";
-import { LikeStatus } from "../../types/comment.interface";
+import { LikeStatus } from "../../types/comment.type";
 
 export const LikeStatusValidator = [
   body("likeStatus")

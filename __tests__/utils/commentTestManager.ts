@@ -1,7 +1,7 @@
 import request from "supertest";
 import { app } from "../../src";
 import { RoutePath } from "../../src/router/route.path";
-import { CommentType } from "../../src/types/comment.interface";
+import { CommentType } from "../../src/types/comment.type";
 import { StatusEnum } from "../../src/types/status.enum";
 import { CreateCommentDto } from "../../src/controller/dto/create-comment.dto";
 

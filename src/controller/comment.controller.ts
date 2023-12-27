@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { CommentService } from "../service/comment.service";
 import { StatusEnum } from "../types/status.enum";
-import { LikeStatus } from "../types/comment.interface";
+import { LikeStatus } from "../types/comment.type";
 import { injectable } from "inversify";
 
 @injectable()

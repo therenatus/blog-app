@@ -1,3 +1,6 @@
+import { HydratedDocument, Model } from "mongoose";
+import { CreateCommentDto } from "../controller/dto/create-comment.dto";
+
 export type CommentatorInfoType = {
   userId: string;
   userLogin: string;
@@ -13,15 +16,16 @@ export type LikesAuthorType = {
   status: LikeStatus;
 };
 
-export interface LikesResponseType extends LikesInfoType {
+export type LikesResponseType = LikesInfoType & {
   myStatus: LikeStatus;
-}
+};
 
 export enum LikeStatus {
   LIKE = "Like",
   DISLIKE = "Dislike",
   NONE = "None",
 }
+
 export type CommentType = {
   id: string;
   content: string;
@@ -32,6 +36,13 @@ export type CommentType = {
   createdAt: Date;
 };
 
+export type CommentStaticType = Model<CommentType> & {
+  makeInstance(
+    data: CreateCommentDto,
+    postId: string,
+    userId: string,
+  ): HydratedDocument<CommentType>;
+};
 export type CommentResponseType = {
   id: string;
   content: string;
