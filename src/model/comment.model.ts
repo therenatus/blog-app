@@ -1,7 +1,16 @@
 import mongoose from "mongoose";
-import { CommentType, LikeStatus } from "../types/comment.interface";
+import {
+  CommentStaticType,
+  CommentType,
+  LikeStatus,
+} from "../types/comment.type";
+import { ObjectId } from "mongodb";
+import { CreateCommentDto } from "../controller/dto/create-comment.dto";
 
-export const CommentSchema = new mongoose.Schema<CommentType>({
+export const CommentSchema = new mongoose.Schema<
+  CommentType,
+  CommentStaticType
+>({
   id: { type: String, require },
   content: { type: String, require },
   postId: { type: String, require },
@@ -32,7 +41,29 @@ export const CommentSchema = new mongoose.Schema<CommentType>({
   createdAt: { type: Date, require },
 });
 
-export const CommentModel = mongoose.model<CommentType>(
+CommentSchema.static(
+  "makeInstance",
+  function makeInstance(
+    data: CreateCommentDto,
+    postId: string,
+    userId: string,
+  ) {
+    return new CommentModel({
+      ...data,
+      _id: new ObjectId(),
+      id: (+new Date()).toString(),
+      createdAt: new Date(),
+      postId: postId,
+      commentatorId: userId,
+      likesAuthors: [],
+      likesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+      },
+    });
+  },
+);
+export const CommentModel = mongoose.model<CommentType, CommentStaticType>(
   "comments",
   CommentSchema,
 );
