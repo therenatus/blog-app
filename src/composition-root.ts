@@ -27,6 +27,7 @@ import { EmailAdapter } from "./adapter/email-adapter";
 import { AuthBusinessLayer } from "./buisness/auth.business";
 import { TokenBusinessLayer } from "./buisness/token.business";
 import { SessionBusinessLayer } from "./buisness/session.business";
+import { CommentBusinessLayer } from "./buisness/comment.business";
 
 export const container = new Container();
 
@@ -61,5 +62,8 @@ container.bind<TokenBusinessLayer>(TokenBusinessLayer).to(TokenBusinessLayer);
 container
   .bind<SessionBusinessLayer>(SessionBusinessLayer)
   .to(SessionBusinessLayer);
+container
+  .bind<CommentBusinessLayer>(CommentBusinessLayer)
+  .to(CommentBusinessLayer);
 
 container.bind<EmailAdapter>(EmailAdapter).to(EmailAdapter);

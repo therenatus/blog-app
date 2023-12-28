@@ -1,4 +1,4 @@
-import { CommentType } from "../types/comment.interface";
+import { CommentType } from "../types/comment.type";
 import { CommentModel } from "../model/comment.model";
 import { HydratedDocument } from "mongoose";
 import { WithId } from "mongodb";
@@ -6,6 +6,9 @@ import { injectable } from "inversify";
 
 @injectable()
 export class CommentRepository {
+  async save(comment: HydratedDocument<CommentType>): Promise<CommentType> {
+    return comment.save();
+  }
   async findOne(id: string): Promise<WithId<CommentType> | null> {
     return CommentModel.findOne({ id }, { __v: 0 }).lean();
   }
