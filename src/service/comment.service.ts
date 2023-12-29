@@ -1,4 +1,4 @@
-import { CommentResponseType, LikeStatus } from "../types/comment.type";
+import { CommentResponseType } from "../types/comment.type";
 import { CommentUserMapping } from "../helpers/comment-user-mapping";
 import { CommentRepository } from "../repositories/comment.repository";
 import { UserRepository } from "../repositories/user.repository";
@@ -9,6 +9,7 @@ import { JwtService } from "../helpers/jwtService";
 import { injectable } from "inversify";
 import { CommentBusinessLayer } from "../buisness/comment.business";
 import { CommentModel } from "../model/comment.model";
+import { LikeStatus } from "../types/like.type";
 
 @injectable()
 export class CommentService {
@@ -63,52 +64,6 @@ export class CommentService {
     }
 
     return this.repository.save(comment);
-    // const comment = await this.repository.findOneWithLike(
-    //   commentId,
-    //   userId,
-    //   false,
-    // );
-    // if (comment === null) {
-    //   const commentt = await this.repository.findSmartOne(commentId);
-    //   if (!commentt) {
-    //     return false;
-    //   }
-    //   commentt.likesAuthors.push({
-    //     userId: userId,
-    //     status: status,
-    //   });
-    //   if (status === LikeStatus.LIKE) {
-    //     commentt.likesInfo.likesCount += 1;
-    //   } else if (status === LikeStatus.DISLIKE) {
-    //     commentt.likesInfo.dislikesCount += 1;
-    //   }
-    //   return await this.repository.updateComment(commentt);
-    // }
-    // if (
-    //   comment.likesAuthors.length >= 1 &&
-    //   comment.likesAuthors[0].status !== status
-    // ) {
-    //   if (status === LikeStatus.LIKE) {
-    //     comment.likesInfo.likesCount += 1;
-    //     comment.likesInfo.dislikesCount -= 1;
-    //     comment.likesAuthors[0].status = status;
-    //   } else if (status === LikeStatus.DISLIKE) {
-    //     comment.likesInfo.likesCount -= 1;
-    //     comment.likesInfo.dislikesCount += 1;
-    //     comment.likesAuthors[0].status = status;
-    //   } else if (status === LikeStatus.NONE) {
-    //     if (comment.likesAuthors[0].status === LikeStatus.LIKE) {
-    //       comment.likesInfo.likesCount -= 1;
-    //     } else if (comment.likesAuthors[0].status === LikeStatus.DISLIKE) {
-    //       comment.likesInfo.dislikesCount -= 1;
-    //     }
-    //     comment.likesAuthors = [];
-    //   }
-    //   return await this.repository.updateComment(comment);
-    // }
-    // if (comment.likesAuthors[0].status === status) {
-    //   return await this.repository.updateComment(comment);
-    // }
   }
 
   async getOne(

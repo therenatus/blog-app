@@ -1,11 +1,8 @@
 import mongoose from "mongoose";
-import {
-  CommentStaticType,
-  CommentType,
-  LikeStatus,
-} from "../types/comment.type";
+import { CommentStaticType, CommentType } from "../types/comment.type";
 import { ObjectId } from "mongodb";
 import { CreateCommentDto } from "../controller/dto/create-comment.dto";
+import { LikeStatus } from "../types/like.type";
 
 export const CommentSchema = new mongoose.Schema<
   CommentType,

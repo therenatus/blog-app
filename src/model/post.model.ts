@@ -1,6 +1,6 @@
 import * as mongoose from "mongoose";
-import { IPost } from "../types/post.interface";
-export const PostSchema = new mongoose.Schema<IPost>({
+import { PostType } from "../types/post.type";
+export const PostSchema = new mongoose.Schema<PostType>({
   id: { type: String, require },
   title: { type: String, require },
   shortDescription: { type: String, require },
@@ -10,4 +10,4 @@ export const PostSchema = new mongoose.Schema<IPost>({
   createdAt: { type: Date, require },
 });
 
-export const PostModel = mongoose.model<IPost>("posts", PostSchema);
+export const PostModel = mongoose.model<PostType>("posts", PostSchema);

@@ -1,9 +1,6 @@
 import { UserDBType } from "../types/user.types";
-import {
-  CommentResponseType,
-  CommentType,
-  LikeStatus,
-} from "../types/comment.type";
+import { CommentResponseType, CommentType } from "../types/comment.type";
+import { LikeStatus } from "../types/like.type";
 
 export const CommentUserMapping = (
   comment: CommentType,

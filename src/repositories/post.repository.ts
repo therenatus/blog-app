@@ -1,6 +1,6 @@
 import { IQuery } from "../types/query.interface";
 import { TResponseWithData } from "../types/respone-with-data.type";
-import { IPost } from "../types/post.interface";
+import { PostType } from "../types/post.type";
 import { ObjectId, WithId } from "mongodb";
 import { PostModel } from "../model/post.model";
 import { injectable } from "inversify";
@@ -9,11 +9,13 @@ import { injectable } from "inversify";
 export class PostRepository {
   async find(
     query: IQuery,
-  ): Promise<TResponseWithData<WithId<IPost>[], number, "data", "totalCount">> {
+  ): Promise<
+    TResponseWithData<WithId<PostType>[], number, "data", "totalCount">
+  > {
     return await postPagination(query);
   }
 
-  async findOne(id: string | ObjectId): Promise<IPost | null> {
+  async findOne(id: string | ObjectId): Promise<PostType | null> {
     let findBy: any;
     ObjectId.isValid(id)
       ? (findBy = { _id: new ObjectId(id) })
@@ -21,11 +23,11 @@ export class PostRepository {
     return PostModel.findOne(findBy, { _id: 0 }).lean();
   }
 
-  async create(body: IPost): Promise<IPost | null> {
+  async create(body: PostType): Promise<PostType | null> {
     return PostModel.create(body);
   }
 
-  async update(id: string, body: any): Promise<IPost | boolean> {
+  async update(id: string, body: any): Promise<PostType | boolean> {
     const res = await PostModel.findOneAndUpdate({ id }, { body });
     if (!res) {
       return false;
@@ -41,7 +43,9 @@ export class PostRepository {
 
 export async function postPagination(
   query: IQuery,
-): Promise<TResponseWithData<WithId<IPost>[], number, "data", "totalCount">> {
+): Promise<
+  TResponseWithData<WithId<PostType>[], number, "data", "totalCount">
+> {
   const { sortDirection, pageSize, pageNumber, sortBy } = query;
   let filter: any = {};
   const sortOptions: { [key: string]: any } = {};

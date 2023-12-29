@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { CommentService } from "../service/comment.service";
 import { StatusEnum } from "../types/status.enum";
-import { LikeStatus } from "../types/comment.type";
 import { injectable } from "inversify";
+import { LikeStatus } from "../types/like.type";
+import { RequestType } from "../types/request.type";
 
 @injectable()
 export class CommentController {
@@ -62,7 +63,7 @@ export class CommentController {
   }
 
   async like(
-    req: Request<{ id: string }, { likeStatus: LikeStatus }>,
+    req: RequestType<{ id: string }, { likeStatus: LikeStatus }>,
     res: Response,
   ) {
     if (!req.params.id) {
@@ -78,6 +79,7 @@ export class CommentController {
     if (!like) {
       return res.sendStatus(StatusEnum.NOT_FOUND);
     }
+
     res.status(StatusEnum.NOT_CONTENT).send();
   }
 }

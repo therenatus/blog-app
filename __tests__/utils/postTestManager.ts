@@ -3,7 +3,7 @@ import { app } from "../../src";
 import { RoutePath } from "../../src/router/route.path";
 import { CreatePostDto } from "../../src/controller/dto/create-post.dto";
 import { StatusEnum } from "../../src/types/status.enum";
-import { IPost } from "../../src/types/post.interface";
+import { PostType } from "../../src/types/post.type";
 import { IPaginationResponse } from "../../src/types/pagination-response.interface";
 
 const getRequest = () => {
@@ -68,7 +68,7 @@ export class PostTestManager {
       .expect(expectedStatusCode);
   }
 
-  private _checkResponseData(data: IPost) {
+  private _checkResponseData(data: PostType) {
     expect(data).toMatchObject({
       id: expect.any(String),
       title: expect.any(String),
@@ -79,7 +79,7 @@ export class PostTestManager {
       createdAt: expect.any(String),
     });
   }
-  private _checkResponsesData(data: IPaginationResponse<IPost>) {
+  private _checkResponsesData(data: IPaginationResponse<PostType>) {
     expect(data).toEqual(
       expect.objectContaining({
         pageSize: expect.any(Number),

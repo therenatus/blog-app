@@ -26,9 +26,6 @@ export class AuthBusinessLayer {
     body: LoginType,
   ): Promise<HydratedDocument<UserDBType, UserDBMethodsType> | null> {
     const user = await this.repository.getOne(body.loginOrEmail);
-    // if (!user || !user.confirmStatus()) {
-    //   return null;
-    // }
     if (!user) {
       return null;
     }

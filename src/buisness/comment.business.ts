@@ -2,12 +2,13 @@ import { PostRepository } from "../repositories/post.repository";
 import { UserRepository } from "../repositories/user.repository";
 import { UserDBType } from "../types/user.types";
 import { CommentUserMapping } from "../helpers/comment-user-mapping";
-import { CommentType, LikeStatus } from "../types/comment.type";
+import { CommentType } from "../types/comment.type";
 import { injectable } from "inversify";
 import { HydratedDocument } from "mongoose";
 import { CommentRepository } from "../repositories/comment.repository";
 import { JwtService } from "../helpers/jwtService";
 import { WithId } from "mongodb";
+import { LikeStatus } from "../types/like.type";
 
 @injectable()
 export class CommentBusinessLayer {
