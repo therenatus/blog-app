@@ -2,7 +2,7 @@ import { Response } from "express";
 import { BlogService } from "../service/blog.service";
 import { IPaginationResponse } from "../types/pagination-response.interface";
 import { BlogType } from "../types/blog.type";
-import { IPost } from "../types/post.interface";
+import { PostType } from "../types/post.type";
 import { PostService } from "../service/post.service";
 import { RequestType } from "../types/request.type";
 import { URIParamsInterface } from "../types/URIParams.interface";
@@ -64,7 +64,7 @@ export class BlogController {
 
   async getBlogPosts(
     req: RequestType<URIParamsInterface, {}, IQuery>,
-    res: Response<IPaginationResponse<IPost[]>>,
+    res: Response<IPaginationResponse<PostType[]>>,
   ) {
     if (!req.params.id) {
       return res.sendStatus(StatusEnum.NOT_FOUND);
@@ -74,7 +74,7 @@ export class BlogController {
       return res.sendStatus(StatusEnum.NOT_FOUND);
     }
     const { items, meta } = posts;
-    const blogsResponse: IPaginationResponse<IPost[]> = {
+    const blogsResponse: IPaginationResponse<PostType[]> = {
       pageSize: meta.pageSize,
       page: meta.pageNumber,
       pagesCount: Math.ceil(meta.totalCount / meta.pageSize),

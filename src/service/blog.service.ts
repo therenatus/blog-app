@@ -4,7 +4,7 @@ import { TResponseWithData } from "../types/respone-with-data.type";
 import { Document } from "mongodb";
 import { QueryBuilder } from "../helpers/query-builder";
 import { TMeta } from "../types/meta.type";
-import { IPost } from "../types/post.interface";
+import { PostType } from "../types/post.type";
 import { CreateBlogDto } from "../controller/dto/create-blog.dto";
 import { injectable } from "inversify";
 import { BlogModel } from "../model/blog.model";
@@ -40,7 +40,7 @@ export class BlogService {
   async findBlogsPost(
     id: string,
     query: any,
-  ): Promise<TResponseWithData<IPost[], TMeta, "items", "meta"> | boolean> {
+  ): Promise<TResponseWithData<PostType[], TMeta, "items", "meta"> | boolean> {
     const querySearch = QueryBuilder(query);
     const meta: TMeta = {
       ...querySearch,
