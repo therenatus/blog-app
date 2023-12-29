@@ -6,11 +6,11 @@ import { AuthMiddleware } from "../middleware/auth.middleware";
 import { CreateCommentValidator } from "./validator/create-comment.validator";
 import express from "express";
 import { PostController } from "../controller/post.controller";
+import { LikeStatusValidator } from "./validator/like-status.validator";
 
 const router = express.Router();
 const postController = container.resolve(PostController);
 
-router.put("*", BasicAuthMiddleware);
 router.get("/", postController.getPosts.bind(postController));
 
 router.post(
@@ -25,6 +25,7 @@ router.get("/:id", postController.getPost.bind(postController));
 
 router.put(
   "/:id",
+  BasicAuthMiddleware,
   createPostValidator,
   InputValidationMiddleware,
   postController.updatePost.bind(postController),
@@ -47,5 +48,13 @@ router.post(
 router.get(
   "/:id/comments",
   postController.getPostComments.bind(postController),
+);
+
+router.put(
+  "/:id/like-status",
+  AuthMiddleware,
+  LikeStatusValidator,
+  InputValidationMiddleware,
+  postController.like.bind(postController),
 );
 export default router;
