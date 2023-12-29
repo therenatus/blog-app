@@ -7,7 +7,7 @@ import { PostTestManager } from "../utils/postTestManager";
 import { BlogTestManager } from "../utils/blogTestManager";
 import { CreateBlogDto } from "../../src/controller/dto/create-blog.dto";
 import { StatusEnum } from "../../src/types/status.enum";
-import { IPost } from "../../src/types/post.interface";
+import { PostType } from "../../src/types/post.type";
 import { BlogType } from "../../src/types/blog.type";
 import mongoose from "mongoose";
 
@@ -48,7 +48,7 @@ const incorrectToken =
 
 describe("/api/posts test post api", () => {
   let token: string;
-  let post: IPost;
+  let post: PostType;
   let blog: BlogType;
   beforeAll(async () => {
     await mongoose.connect(mongoURI);

@@ -52,17 +52,8 @@ export class UserRepository {
     if (!ObjectId.isValid(id)) {
       filter = { "accountData.id": id };
     }
-    return UserModel.findOne(filter, {
-      _id: 0,
-    });
+    return UserModel.findOne(filter);
   }
-
-  // async create(body: UserDBType): Promise<UserDBType | null> {
-  //   const user = await UserModel.create(body);
-  //   return UserModel.findById(user._id, {
-  //     "accountData.hashPassword": 0,
-  //   }).exec();
-  // }
 
   async delete(id: string): Promise<any> {
     const { deletedCount } = await UserModel.deleteOne({

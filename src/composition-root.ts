@@ -28,6 +28,9 @@ import { AuthBusinessLayer } from "./buisness/auth.business";
 import { TokenBusinessLayer } from "./buisness/token.business";
 import { SessionBusinessLayer } from "./buisness/session.business";
 import { CommentBusinessLayer } from "./buisness/comment.business";
+import { LikeBusinessLayer } from "./buisness/like.business";
+import { PostLikeRepository } from "./repositories/post-like.repository";
+import { PostBusinessLayer } from "./buisness/post.business";
 
 export const container = new Container();
 
@@ -46,6 +49,7 @@ container.bind<PostRepository>(PostRepository).to(PostRepository);
 container.bind<SessionRepository>(SessionRepository).to(SessionRepository);
 container.bind<TestingRepository>(TestingRepository).to(TestingRepository);
 container.bind<TokenRepository>(TokenRepository).to(TokenRepository);
+container.bind<PostLikeRepository>(PostLikeRepository).to(PostLikeRepository);
 
 container.bind<AuthService>(AuthService).to(AuthService);
 container.bind<BlogService>(BlogService).to(BlogService);
@@ -65,5 +69,7 @@ container
 container
   .bind<CommentBusinessLayer>(CommentBusinessLayer)
   .to(CommentBusinessLayer);
+container.bind<LikeBusinessLayer>(LikeBusinessLayer).to(LikeBusinessLayer);
+container.bind<PostBusinessLayer>(PostBusinessLayer).to(PostBusinessLayer);
 
 container.bind<EmailAdapter>(EmailAdapter).to(EmailAdapter);

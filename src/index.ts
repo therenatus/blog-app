@@ -17,15 +17,6 @@ app.use(cookieParser());
 app.set("trust proxy", true);
 app.use("/api", router);
 
-// const start = async () => {
-//   await runDb();
-//   app.listen(3333, () => {
-//     console.log(`Server started on port ${PORT}`);
-//   });
-// };
-//
-// start();
-
 const start = async () => {
   await runDb();
 };

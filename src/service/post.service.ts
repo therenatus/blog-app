@@ -1,4 +1,4 @@
-import { IPost } from "../types/post.interface";
+import { PostResponseType, PostType } from "../types/post.type";
 import { PostRepository } from "../repositories/post.repository";
 import { BlogRepository } from "../repositories/blog.repository";
 import { QueryBuilder } from "../helpers/query-builder";
@@ -7,17 +7,22 @@ import { Document } from "mongodb";
 import { TResponseWithData } from "../types/respone-with-data.type";
 import { CreatePostDto } from "../controller/dto/create-post.dto";
 import { injectable } from "inversify";
+import { LikeBusinessLayer } from "../buisness/like.business";
+import { LikeStatus } from "../types/like.type";
+import { PostBusinessLayer } from "../buisness/post.business";
 
 @injectable()
 export class PostService {
   constructor(
     protected repository: PostRepository,
     protected blogRepository: BlogRepository,
+    protected postBusinessLayer: PostBusinessLayer,
+    protected likeBusinessLayer: LikeBusinessLayer,
   ) {}
 
   async getAll(
     query: any,
-  ): Promise<TResponseWithData<IPost[], TMeta, "items", "meta">> {
+  ): Promise<TResponseWithData<PostType[], TMeta, "items", "meta">> {
     const querySearch = QueryBuilder(query);
     const meta: TMeta = {
       ...querySearch,
@@ -31,14 +36,24 @@ export class PostService {
     return { items: data, meta: meta };
   }
 
-  async getOne(id: string): Promise<IPost | null> {
-    return await this.repository.findOne(id);
+  async getOne(
+    id: string,
+    userId: string | undefined,
+  ): Promise<PostResponseType | null> {
+    let user;
+    if (userId) {
+      user = await this.postBusinessLayer.verifyUser(userId);
+    }
+    if (user) {
+      userId = user.id;
+    }
+    return await this.postBusinessLayer.findOneWithLikes(id, userId);
   }
 
   async create(
     body: CreatePostDto,
     id: string | null,
-  ): Promise<IPost | boolean | null> {
+  ): Promise<PostType | boolean | null> {
     const date = new Date();
     if (!body.blogId && !id) {
       return false;
@@ -47,7 +62,7 @@ export class PostService {
     if (!blog) {
       return false;
     }
-    const newPost: IPost = {
+    const newPost: PostType = {
       ...body,
       blogName: blog.name,
       createdAt: date,
@@ -57,7 +72,15 @@ export class PostService {
     return await this.repository.create(newPost);
   }
 
-  async update(id: string, body: any): Promise<IPost | boolean> {
+  async like(postId: string, userId: string, status: LikeStatus) {
+    return await this.likeBusinessLayer.prepareCommentForLike(
+      postId,
+      userId,
+      status,
+    );
+  }
+
+  async update(id: string, body: any): Promise<PostType | boolean> {
     return await this.repository.update(id, body);
   }
 
