@@ -23,7 +23,7 @@ export type LikeType = {
   userInfo: UserDBType;
   postId: string;
   likeStatus: LikeStatus;
-  createdAt: Date;
+  createdAt: string;
 };
 
 export type LikesCount = {

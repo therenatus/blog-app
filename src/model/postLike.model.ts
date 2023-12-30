@@ -12,7 +12,7 @@ export const PostLikeSchema = new mongoose.Schema<LikeType>({
     default: LikeStatus.NONE,
     require: true,
   },
-  createdAt: { type: Date, require },
+  createdAt: { type: String, require },
 });
 
 export const PostLikeModel = mongoose.model<LikeType>(
