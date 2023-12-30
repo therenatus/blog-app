@@ -22,7 +22,7 @@ export class PostLikeRepository {
   }
 
   async findNewestLikes(postId: string): Promise<LikeType[]> {
-    return PostLikeModel.find({ postId })
+    return PostLikeModel.find({ postId, likeStatus: LikeStatus.LIKE })
       .sort({ createdAt: "desc" })
       .limit(3)
       .populate("userInfo");
