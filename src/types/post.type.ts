@@ -26,7 +26,7 @@ export type LikeInfo = LikesResponseType & {
 };
 
 export type NewestLikes = {
-  addedAt: Date;
+  addedAt: string;
   userId: string;
   login: string;
 };
