@@ -87,7 +87,7 @@ export async function postDataPagination(
     filter.blogId = id;
   }
   const total = await PostModel.countDocuments(filter);
-  const data = await PostModel.find(filter)
+  const data = await PostModel.find(filter, { _id: 0, __v: 0 })
     .sort(sortOptions)
     .skip(+pageSize * (pageNumber - 1))
     .limit(+pageSize)
