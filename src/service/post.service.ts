@@ -4,7 +4,7 @@ import { BlogRepository } from "../repositories/blog.repository";
 import { CreatePostDto } from "../controller/dto/create-post.dto";
 import { injectable } from "inversify";
 import { LikeBusinessLayer } from "../buisness/like.business";
-import { LikeStatus } from "../types/like.type";
+import { LikeStatus, LikeType } from "../types/like.type";
 import { PostBusinessLayer } from "../buisness/post.business";
 import { IPaginationResponse } from "../types/pagination-response.interface";
 
@@ -67,7 +67,15 @@ export class PostService {
     return this.postBusinessLayer.findOneWithLikes(post.id, auth);
   }
 
-  async like(postId: string, userId: string, status: LikeStatus) {
+  async like(
+    postId: string,
+    userId: string,
+    status: LikeStatus,
+  ): Promise<LikeType | null | false> {
+    const post = await this.repository.findOne(postId);
+    if (!post) {
+      return false;
+    }
     return await this.likeBusinessLayer.prepareCommentForLike(
       postId,
       userId,

@@ -3,6 +3,7 @@ import { PostLikeModel } from "../model/postLike.model";
 import { HydratedDocument } from "mongoose";
 import { LikesCount, LikeStatus, LikeType } from "../types/like.type";
 import { Query } from "../buisness/post.business";
+import { PostType } from "../types/post.type";
 
 @injectable()
 export class PostLikeRepository {
@@ -17,11 +18,11 @@ export class PostLikeRepository {
     return PostLikeModel.findOne(query);
   }
 
-  async save(like: HydratedDocument<LikeType>) {
+  async save(like: HydratedDocument<LikeType>): Promise<LikeType> {
     return like.save();
   }
 
-  async findNewestLikes(postId: string) {
+  async findNewestLikes(postId: string): Promise<PostType[]> {
     return PostLikeModel.find({ postId })
       .sort({ createdAt: "desc" })
       .limit(3)

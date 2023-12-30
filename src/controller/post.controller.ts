@@ -114,7 +114,10 @@ export class PostController {
     if (!userId) {
       return res.status(403).send();
     }
-    await this.service.like(postId, userId, status);
+    const like = await this.service.like(postId, userId, status);
+    if (like) {
+      return res.status(404).send();
+    }
     res.status(StatusEnum.NOT_CONTENT).send();
   }
 }

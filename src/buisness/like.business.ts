@@ -17,7 +17,7 @@ export class LikeBusinessLayer {
     postId: string,
     userId: string,
     status: LikeStatus,
-  ) {
+  ): Promise<LikeType | null> {
     let post = await this.likeRepository.findLike(postId, userId);
     let user = await this.userRepository.findOneById(userId);
     if (!user) {
@@ -35,7 +35,6 @@ export class LikeBusinessLayer {
     user: any,
     likeStatus: LikeStatus,
   ): HydratedDocument<LikeType> {
-    console.log("user", user);
     return new PostLikeModel({
       postId,
       userId: user.accountData.id,
