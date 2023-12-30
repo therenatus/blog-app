@@ -47,8 +47,15 @@ export class PostService {
   async create(
     body: CreatePostDto,
     id: string | null,
-  ): Promise<PostType | boolean | null> {
-    const date = new Date();
+    auth: string | undefined,
+  ): Promise<PostResponseType | boolean | null> {
+    let user;
+    if (auth) {
+      user = await this.postBusinessLayer.verifyUser(auth);
+    }
+    if (user) {
+      auth = user.id;
+    }
     if (!body.blogId && !id) {
       return false;
     }
@@ -56,14 +63,8 @@ export class PostService {
     if (!blog) {
       return false;
     }
-    const newPost: PostType = {
-      ...body,
-      blogName: blog.name,
-      createdAt: date,
-      blogId: blog.id,
-      id: (+date).toString(),
-    };
-    return await this.repository.create(newPost);
+    const post = await this.postBusinessLayer.createPost(body, blog);
+    return this.postBusinessLayer.findOneWithLikes(post.id, auth);
   }
 
   async like(postId: string, userId: string, status: LikeStatus) {

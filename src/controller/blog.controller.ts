@@ -88,10 +88,11 @@ export class BlogController {
     req: RequestType<{ id: string }, CreatePostDto>,
     res: Response,
   ) {
+    const auth = req.headers.authorization;
     if (!req.params.id) {
       return res.sendStatus(StatusEnum.NOT_FOUND);
     }
-    const post = await this.postService.create(req.body, req.params.id);
+    const post = await this.postService.create(req.body, req.params.id, auth);
     if (post === false || !post) {
       return res.sendStatus(StatusEnum.NOT_FOUND);
     }

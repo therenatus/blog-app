@@ -12,6 +12,10 @@ import { JwtService } from "../helpers/jwtService";
 import { UserRepository } from "../repositories/user.repository";
 import { QueryBuilder } from "../helpers/query-builder";
 import { TMeta } from "../types/meta.type";
+import { PostModel } from "../model/post.model";
+import { ObjectId } from "mongodb";
+import { BlogType } from "../types/blog.type";
+import { CreatePostDto } from "../controller/dto/create-post.dto";
 
 export interface Query {
   postId: string;
@@ -36,6 +40,19 @@ export class PostBusinessLayer {
       ...querySearch,
       totalCount,
     };
+  }
+
+  async createPost(body: CreatePostDto, blog: BlogType) {
+    const date = new Date();
+    const newPost = new PostModel({
+      _id: new ObjectId(),
+      ...body,
+      blogName: blog.name,
+      createdAt: date,
+      blogId: blog.id,
+      id: (+date).toString(),
+    });
+    return await this.repository.save(newPost);
   }
   async findAllWithLikes(querySearch: any, auth: any) {
     let user: any | null;

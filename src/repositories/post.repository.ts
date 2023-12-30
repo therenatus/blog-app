@@ -4,9 +4,13 @@ import { PostType } from "../types/post.type";
 import { ObjectId, WithId } from "mongodb";
 import { PostModel } from "../model/post.model";
 import { injectable } from "inversify";
+import { HydratedDocument } from "mongoose";
 
 @injectable()
 export class PostRepository {
+  async save(post: HydratedDocument<PostType>): Promise<PostType> {
+    return post.save();
+  }
   async find(
     query: IQuery,
   ): Promise<

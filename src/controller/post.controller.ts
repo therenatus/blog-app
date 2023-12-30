@@ -18,20 +18,6 @@ export class PostController {
     protected postBusinessLayer: PostBusinessLayer,
   ) {}
 
-  // async getPosts(req: Request, res: Response) {
-  //   const auth = req.headers.authorization;
-  //   const posts = await this.service.getAll(req.query, auth);
-  //   const { items, meta } = posts;
-  //   const blogsResponse: IPaginationResponse<PostType[]> = {
-  //     pageSize: meta.pageSize,
-  //     page: meta.pageNumber,
-  //     pagesCount: Math.ceil(meta.totalCount / meta.pageSize),
-  //     totalCount: meta.totalCount,
-  //     items: items,
-  //   };
-  //   return res.status(200).send(blogsResponse);
-  // }
-
   async getPosts(req: Request, res: Response) {
     const auth = req.headers.authorization;
     const postResponse = await this.service.getAll(req.query, auth);
@@ -51,7 +37,8 @@ export class PostController {
   }
 
   async create(req: RequestType<any, CreatePostDto>, res: Response) {
-    const post = await this.service.create(req.body, null);
+    const auth = req.headers.authorization;
+    const post = await this.service.create(req.body, null, auth);
     if (post === false) {
       return res.status(404).send();
     }
