@@ -54,14 +54,17 @@ export class PostBusinessLayer {
     });
     return await this.repository.save(newPost);
   }
-  async findAllWithLikes(querySearch: any, auth: any) {
+  async findAllWithLikes(querySearch: any, auth: any, blogId?: string) {
     let user: any | null;
     if (!auth) {
       user = null;
     } else {
       user = await this.jwtService.getUserByToken(auth.split(" ")[1]);
     }
-    const { data, totalCount } = await this.repository.find(querySearch);
+    const { data, totalCount } = await this.repository.find(
+      querySearch,
+      blogId,
+    );
     const postWithLikes = await Promise.all(
       data.map(async (post) => {
         const newestLikes = await this.findNewestLikes(post.id);

@@ -13,10 +13,11 @@ export class PostRepository {
   }
   async find(
     query: IQuery,
+    blogId?: string,
   ): Promise<
     TResponseWithData<WithId<PostType>[], number, "data", "totalCount">
   > {
-    return await postPagination(query);
+    return await postPagination(query, blogId);
   }
 
   async findOne(id: string | ObjectId): Promise<PostType | null> {
@@ -47,6 +48,7 @@ export class PostRepository {
 
 export async function postPagination(
   query: IQuery,
+  blogId?: string,
 ): Promise<
   TResponseWithData<WithId<PostType>[], number, "data", "totalCount">
 > {
@@ -54,6 +56,10 @@ export async function postPagination(
   let filter: any = {};
   const sortOptions: { [key: string]: any } = {};
   sortOptions[sortBy as string] = sortDirection;
+
+  if (blogId) {
+    filter.blogId = blogId;
+  }
 
   const total = await PostModel.find(filter).countDocuments();
   const data = await PostModel.find(filter, {

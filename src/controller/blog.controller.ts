@@ -12,12 +12,14 @@ import { StatusEnum } from "../types/status.enum";
 import { UpdateBlogDto } from "./dto/update-blog.dto";
 import { CreatePostDto } from "./dto/create-post.dto";
 import { injectable } from "inversify";
+import { PostBusinessLayer } from "../buisness/post.business";
 
 @injectable()
 export class BlogController {
   constructor(
     protected service: BlogService,
     protected postService: PostService,
+    protected postBusinessLayer: PostBusinessLayer,
   ) {}
 
   async getBlogs(
@@ -69,20 +71,36 @@ export class BlogController {
     if (!req.params.id) {
       return res.sendStatus(StatusEnum.NOT_FOUND);
     }
-    const posts = await this.service.findBlogsPost(req.params.id, req.query);
-    if (typeof posts === "boolean") {
-      return res.sendStatus(StatusEnum.NOT_FOUND);
-    }
-    const { items, meta } = posts;
-    const blogsResponse: IPaginationResponse<PostType[]> = {
-      pageSize: meta.pageSize,
-      page: meta.pageNumber,
-      pagesCount: Math.ceil(meta.totalCount / meta.pageSize),
-      totalCount: meta.totalCount,
-      items: items,
-    };
-    res.status(StatusEnum.SUCCESS).send(blogsResponse);
+    const auth = req.headers.authorization;
+    const postResponse = await this.service.getAllPosts(
+      req.query,
+      auth,
+      req.params.id,
+    );
+    return res.status(200).send(postResponse);
   }
+
+  // async getBlogPosts(
+  //   req: RequestType<URIParamsInterface, {}, IQuery>,
+  //   res: Response<IPaginationResponse<PostType[]>>,
+  // ) {
+  //   if (!req.params.id) {
+  //     return res.sendStatus(StatusEnum.NOT_FOUND);
+  //   }
+  //   const posts = await this.service.findBlogsPost(req.params.id, req.query);
+  //   if (typeof posts === "boolean") {
+  //     return res.sendStatus(StatusEnum.NOT_FOUND);
+  //   }
+  //   const { items, meta } = posts;
+  //   const blogsResponse: IPaginationResponse<PostType[]> = {
+  //     pageSize: meta.pageSize,
+  //     page: meta.pageNumber,
+  //     pagesCount: Math.ceil(meta.totalCount / meta.pageSize),
+  //     totalCount: meta.totalCount,
+  //     items: items,
+  //   };
+  //   res.status(StatusEnum.SUCCESS).send(blogsResponse);
+  // }
 
   async createPost(
     req: RequestType<{ id: string }, CreatePostDto>,
