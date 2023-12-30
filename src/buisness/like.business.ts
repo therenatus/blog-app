@@ -40,7 +40,7 @@ export class LikeBusinessLayer {
       postId,
       userId: user.accountData.id,
       likeStatus,
-      createdAt: new Date(),
+      createdAt: (+new Date()).toString(),
       userInfo: user._id, //d
     });
   }
