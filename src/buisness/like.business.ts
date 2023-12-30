@@ -48,7 +48,7 @@ export class LikeBusinessLayer {
     like: HydratedDocument<LikeType>,
     likeStatus: LikeStatus,
   ) {
-    like.likeStatus === likeStatus;
+    like.likeStatus = likeStatus;
     return like;
   }
 }
