@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
 import { PostService } from "../service/post.service";
-import { IPaginationResponse } from "../types/pagination-response.interface";
-import { PostType } from "../types/post.type";
 import { CommentService } from "../service/comment.service";
 import { CommentQueryRepository } from "../repositories/query/comment-query.repository";
 import { RequestType } from "../types/request.type";
@@ -10,33 +8,34 @@ import { CreateCommentDto } from "./dto/create-comment.dto";
 import { injectable } from "inversify";
 import { LikeStatus } from "../types/like.type";
 import { StatusEnum } from "../types/status.enum";
+import { PostBusinessLayer } from "../buisness/post.business";
 
 @injectable()
 export class PostController {
   constructor(
     protected service: PostService,
     protected commentService: CommentService,
+    protected postBusinessLayer: PostBusinessLayer,
   ) {}
 
-  async getPosts(req: Request, res: Response) {
-    const posts = await this.service.getAll(req.query);
-    const { items, meta } = posts;
-    const blogsResponse: IPaginationResponse<PostType[]> = {
-      pageSize: meta.pageSize,
-      page: meta.pageNumber,
-      pagesCount: Math.ceil(meta.totalCount / meta.pageSize),
-      totalCount: meta.totalCount,
-      items: items,
-    };
-    return res.status(200).send(blogsResponse);
-  }
+  // async getPosts(req: Request, res: Response) {
+  //   const auth = req.headers.authorization;
+  //   const posts = await this.service.getAll(req.query, auth);
+  //   const { items, meta } = posts;
+  //   const blogsResponse: IPaginationResponse<PostType[]> = {
+  //     pageSize: meta.pageSize,
+  //     page: meta.pageNumber,
+  //     pagesCount: Math.ceil(meta.totalCount / meta.pageSize),
+  //     totalCount: meta.totalCount,
+  //     items: items,
+  //   };
+  //   return res.status(200).send(blogsResponse);
+  // }
 
-  async create(req: RequestType<any, CreatePostDto>, res: Response) {
-    const post = await this.service.create(req.body, null);
-    if (post === false) {
-      return res.status(404).send();
-    }
-    res.status(201).send(post);
+  async getPosts(req: Request, res: Response) {
+    const auth = req.headers.authorization;
+    const postResponse = await this.service.getAll(req.query, auth);
+    return res.status(200).send(postResponse);
   }
 
   async getPost(req: Request, res: Response) {
@@ -49,6 +48,14 @@ export class PostController {
       return res.status(404).send("Not Found");
     }
     res.status(200).send(post);
+  }
+
+  async create(req: RequestType<any, CreatePostDto>, res: Response) {
+    const post = await this.service.create(req.body, null);
+    if (post === false) {
+      return res.status(404).send();
+    }
+    res.status(201).send(post);
   }
 
   async updatePost(req: Request, res: Response) {

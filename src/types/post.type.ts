@@ -17,7 +17,7 @@ export type CreatePostType = {
   id: string;
 };
 
-export type PostResponseType = Omit<PostType, "likes"> & {
+export type PostResponseType = PostType & {
   extendedLikesInfo: LikeInfo;
 };
 

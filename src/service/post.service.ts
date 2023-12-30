@@ -1,15 +1,12 @@
 import { PostResponseType, PostType } from "../types/post.type";
 import { PostRepository } from "../repositories/post.repository";
 import { BlogRepository } from "../repositories/blog.repository";
-import { QueryBuilder } from "../helpers/query-builder";
-import { TMeta } from "../types/meta.type";
-import { Document } from "mongodb";
-import { TResponseWithData } from "../types/respone-with-data.type";
 import { CreatePostDto } from "../controller/dto/create-post.dto";
 import { injectable } from "inversify";
 import { LikeBusinessLayer } from "../buisness/like.business";
 import { LikeStatus } from "../types/like.type";
 import { PostBusinessLayer } from "../buisness/post.business";
+import { IPaginationResponse } from "../types/pagination-response.interface";
 
 @injectable()
 export class PostService {
@@ -22,18 +19,15 @@ export class PostService {
 
   async getAll(
     query: any,
-  ): Promise<TResponseWithData<PostType[], TMeta, "items", "meta">> {
-    const querySearch = QueryBuilder(query);
-    const meta: TMeta = {
-      ...querySearch,
-      totalCount: 0,
-    };
-    const { data, totalCount } = await this.repository.find(querySearch);
-    meta.totalCount = totalCount;
-    data.map((blog: Document) => {
-      delete blog._id;
-    });
-    return { items: data, meta: meta };
+    auth: string | undefined,
+  ): Promise<IPaginationResponse<PostResponseType[]>> {
+    const querySearch = this.postBusinessLayer.queryBuilder(query);
+    const { data, totalCount } = await this.postBusinessLayer.findAllWithLikes(
+      querySearch,
+      auth,
+    );
+    const meta = this.postBusinessLayer.metaData(querySearch, totalCount);
+    return this.postBusinessLayer.postResponseMapping(data, meta);
   }
 
   async getOne(
