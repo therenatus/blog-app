@@ -25,3 +25,8 @@ export type LikeType = {
   likeStatus: LikeStatus;
   createdAt: Date;
 };
+
+export type LikesCount = {
+  likesCount: number;
+  dislikesCount: number;
+};
