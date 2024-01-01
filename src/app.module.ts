@@ -1,9 +1,19 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule } from '@nestjs/config';
+import * as process from 'node:process';
+import { BlogModule } from './blogs/blog.module';
 
 @Module({
-  imports: [],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    MongooseModule.forRoot(process.env.MONGO_URI || 'your_default_mongo_uri'),
+    BlogModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
