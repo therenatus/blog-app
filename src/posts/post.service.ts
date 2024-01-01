@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PostRepository } from './post.repository';
-import { InjectModel } from '@nestjs/mongoose';
-import { Post, PostDocument } from './schema/post.schema';
-import { Model } from 'mongoose';
+import { Post } from './schema/post.schema';
 import { CreatePostDto } from './dto/create-post.dto';
 import { PostBusinessLayer } from './post.business';
 
@@ -11,20 +9,22 @@ export class PostService {
   constructor(
     private readonly postRepository: PostRepository,
     private readonly postBusinessLayer: PostBusinessLayer,
-    @InjectModel(Post.name) private PostModel: Model<PostDocument>,
   ) {}
 
   async getOnePost(id: string): Promise<Post | null> {
     return this.postBusinessLayer.getPostWithLikes(id);
   }
 
-  async updatePost(id: string, dto: CreatePostDto): Promise<Post | boolean> {
-    const blog = await this.postRepository.getOnePost(id);
-    if (!blog) {
-      return false;
+  async createPost(dto: CreatePostDto) {
+    return this.postBusinessLayer.createPost(dto);
+  }
+
+  async updatePost(id: string, dto: CreatePostDto): Promise<Post | null> {
+    const updatedPost = await this.postBusinessLayer.updatePost(id, dto);
+    if (!updatedPost) {
+      return null;
     }
-    const newBlog = new this.PostModel(dto);
-    return this.postRepository.save(newBlog);
+    return this.postRepository.save(updatedPost);
   }
 
   async deleteBlog(id: string): Promise<boolean> {

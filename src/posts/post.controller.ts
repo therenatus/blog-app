@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Post,
   Put,
   Query,
 } from '@nestjs/common';
@@ -21,6 +22,11 @@ export class PostController {
   @Get()
   async getAllPosts(@Query() query: any) {
     return this.postQuery.getAllPosts(query);
+  }
+
+  @Post()
+  async createPost(@Body() dto: CreatePostDto) {
+    return this.postService.createPost(dto);
   }
 
   @Get(':id')
