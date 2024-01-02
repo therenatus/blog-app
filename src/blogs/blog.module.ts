@@ -15,6 +15,9 @@ import { PostModule } from '../posts/post.module';
   ],
   controllers: [BlogController],
   providers: [BlogService, BlogRepository, BlogBusinessLayer, BlogQuery],
-  exports: [BlogRepository],
+  exports: [
+    BlogRepository,
+    MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
+  ],
 })
 export class BlogModule {}
