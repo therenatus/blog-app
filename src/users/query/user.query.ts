@@ -28,19 +28,19 @@ export class UserQuery {
 
     if (searchNameTerm) {
       orConditions.push({
-        'accountData.name': { $regex: searchNameTerm, $options: 'i' },
+        name: { $regex: searchNameTerm, $options: 'i' },
       });
     }
 
     if (searchEmailTerm) {
       orConditions.push({
-        'accountData.email': { $regex: searchEmailTerm, $options: 'i' },
+        email: { $regex: searchEmailTerm, $options: 'i' },
       });
     }
 
     if (searchLoginTerm) {
       orConditions.push({
-        'accountData.login': { $regex: searchLoginTerm, $options: 'i' },
+        login: { $regex: searchLoginTerm, $options: 'i' },
       });
     }
 
