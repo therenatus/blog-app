@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  Res,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -32,22 +33,42 @@ export class PostController {
   }
 
   @Get(':id')
-  async getOnePost(@Param('id') id: string) {
-    return this.postService.getOnePost(id);
+  async getOnePost(@Res() res, @Param('id') id: string) {
+    const post = await this.postService.getOnePost(id);
+    if (!post) {
+      return res.status(404).json({ message: 'Posts not found' });
+    }
+    return post;
   }
 
   @Get(':id/posts')
-  async getOneComments(@Param('id') id: string) {
-    return this.commentService.getOneComment(id);
+  async getOneComments(@Res() res, @Param('id') id: string) {
+    const comment = await this.commentService.getOneComment(id);
+    if (!comment) {
+      return res.status(404).json({ message: 'Posts not found' });
+    }
+    return comment;
   }
 
   @Put(':id')
-  async updateOnePost(@Param('id') id: string, @Body() dto: CreatePostDto) {
-    return this.postService.updatePost(id, dto);
+  async updateOnePost(
+    @Res() res,
+    @Param('id') id: string,
+    @Body() dto: CreatePostDto,
+  ) {
+    const post = await this.postService.updatePost(id, dto);
+    if (!post) {
+      return res.status(404).json({ message: 'Posts not found' });
+    }
+    return;
   }
 
   @Delete(':id')
-  async deleteOnePost(@Param('id') id: string) {
-    return this.postService.deleteBlog(id);
+  async deleteOnePost(@Res() res, @Param('id') id: string) {
+    const post = await this.postService.deletePost(id);
+    if (!post) {
+      return res.status(404).json({ message: 'Posts not found' });
+    }
+    return;
   }
 }

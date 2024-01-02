@@ -27,7 +27,7 @@ export class PostService {
     return this.postRepository.save(updatedPost);
   }
 
-  async deleteBlog(id: string): Promise<boolean> {
+  async deletePost(id: string): Promise<boolean> {
     return this.postRepository.deleteOnePost(id);
   }
 }
