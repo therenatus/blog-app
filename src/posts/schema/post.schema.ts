@@ -36,7 +36,7 @@ PostSchema.statics.makeInstance = function (
 };
 
 export type PostDocument = HydratedDocument<Post>;
-type PostStaticType = {
+export type PostStaticType = {
   makeInstance(dto: CreatePostDto): PostDocument;
 };
 

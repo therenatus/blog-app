@@ -10,17 +10,24 @@ import { PaginationResponse } from '../../types/pagination-response.type';
 export class PostQuery {
   constructor(@InjectModel(Post.name) private PostModel: Model<PostDocument>) {}
 
-  async getAllPosts(query: any): Promise<PaginationResponse<Post[]>> {
+  async getAllPosts(
+    query: any,
+    id?: string,
+  ): Promise<PaginationResponse<Post[]>> {
     const getQueries = QueryBuilder(query);
     const { sortDirection, pageSize, pageNumber, sortBy } = getQueries;
+    const filter: any = {};
+    if (id) {
+      filter.blogId = id;
+    }
     const sortOptions: { [key: string]: any } = {};
     sortOptions[sortBy as string] = sortDirection;
-    const posts = await this.PostModel.find({}, { _id: 0, __v: 0 })
+    const posts = await this.PostModel.find(filter, { _id: 0, __v: 0 })
       .sort(sortOptions)
       .skip(+pageSize * (pageNumber - 1))
       .limit(+pageSize)
       .exec();
-    const count = await this.PostModel.find().countDocuments();
+    const count = await this.PostModel.find(filter).countDocuments();
     const postsWithLikes = await Promise.all(
       posts.map((post) => {
         const simplePost = JSON.parse(JSON.stringify(post));

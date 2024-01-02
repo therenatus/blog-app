@@ -23,7 +23,7 @@ export class PostBusinessLayer {
     const postInstance = { ...dto, blogName: blog.name };
     const post = this.PostModel.makeInstance(postInstance);
 
-    return this.postRepository.save(post);
+    return post.save();
   }
 
   async updatePost(
