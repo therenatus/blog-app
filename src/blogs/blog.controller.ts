@@ -34,7 +34,6 @@ export class BlogController {
   @Get(':id')
   async getOneBlog(@Res() res, @Param('id') id: string) {
     const blog = await this.service.getOneBlog(id);
-    console.log(blog);
     if (!blog) {
       return res.status(404).json({ message: 'Blog not found' });
     }

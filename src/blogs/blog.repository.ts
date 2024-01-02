@@ -11,8 +11,8 @@ export class BlogRepository {
     return blog.save();
   }
 
-  async getOneBlog(id: string): Promise<Blog | null> {
-    return this.BlogModel.findOne({ id }, { _id: 0, __v: 0 });
+  async getOneBlog(id: string): Promise<BlogDocument | null> {
+    return this.BlogModel.findOne({ id });
   }
 
   async deleteOneBlog(id: string): Promise<boolean> {

@@ -9,8 +9,10 @@ export class UserBusinessLayer {
   constructor(@InjectModel(User.name) private userModel: UserModelType) {}
 
   async createUser(dto: CreateUserDto): Promise<User> {
-    const user = this.userModel.makeInstance(dto);
-    const createdUser = await user.save();
-    return deleteIDandV(createdUser);
+    const userInstance = this.userModel.makeInstance(dto);
+    const createdUser = await userInstance.save();
+    const newUser = deleteIDandV(createdUser);
+    const { password, ...user } = newUser;
+    return user;
   }
 }

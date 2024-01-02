@@ -41,7 +41,8 @@ export class BlogService {
   }
 
   async getOneBlog(id: string): Promise<Blog | null> {
-    return this.blogRepository.getOneBlog(id);
+    const blog = await this.blogRepository.getOneBlog(id);
+    return deleteIDandV(blog);
   }
 
   async updateBlog(id: string, dto: CreateBlogDto): Promise<Blog | null> {
@@ -49,8 +50,8 @@ export class BlogService {
     if (!blog) {
       return null;
     }
-    const newBlog = new this.BlogModel(dto);
-    return this.blogRepository.save(newBlog);
+    Object.assign(blog, dto);
+    return blog.save();
   }
 
   async deleteBlog(id: string): Promise<boolean> {
