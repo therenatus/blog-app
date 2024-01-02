@@ -23,23 +23,29 @@ export class UserQuery {
 
     const sortOptions: { [key: string]: any } = {};
     sortOptions[sortBy as string] = sortDirection;
-    let filter: any = {};
+    const filter: any = {};
+    const orConditions: any = [];
+
     if (searchNameTerm) {
-      filter = {
-        name: { $regex: searchNameTerm, $options: 'i' },
-      };
+      orConditions.push({
+        'accountData.name': { $regex: searchNameTerm, $options: 'i' },
+      });
     }
 
     if (searchEmailTerm) {
-      filter = {
-        email: { $regex: searchEmailTerm, $options: 'i' },
-      };
+      orConditions.push({
+        'accountData.email': { $regex: searchEmailTerm, $options: 'i' },
+      });
     }
 
     if (searchLoginTerm) {
-      filter = {
-        login: { $regex: searchLoginTerm, $options: 'i' },
-      };
+      orConditions.push({
+        'accountData.login': { $regex: searchLoginTerm, $options: 'i' },
+      });
+    }
+
+    if (orConditions.length > 0) {
+      filter.$or = orConditions;
     }
 
     const totalCount = await this.userModel.find(filter).countDocuments();

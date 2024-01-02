@@ -42,6 +42,9 @@ export class BlogService {
 
   async getOneBlog(id: string): Promise<Blog | null> {
     const blog = await this.blogRepository.getOneBlog(id);
+    if (!blog) {
+      return null;
+    }
     return deleteIDandV(blog);
   }
 
