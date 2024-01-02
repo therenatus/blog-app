@@ -30,7 +30,11 @@ export class BlogService {
   async getBlogsPosts(
     id: string,
     query: any,
-  ): Promise<PaginationResponse<Post[]>> {
+  ): Promise<PaginationResponse<Post[]> | null> {
+    const blog = await this.getOneBlog(id);
+    if (!blog) {
+      return null;
+    }
     return this.postQuery.getAllPosts(query, id);
   }
 
@@ -38,10 +42,10 @@ export class BlogService {
     return this.blogRepository.getOneBlog(id);
   }
 
-  async updateBlog(id: string, dto: CreateBlogDto): Promise<Blog | boolean> {
+  async updateBlog(id: string, dto: CreateBlogDto): Promise<Blog | null> {
     const blog = await this.blogRepository.getOneBlog(id);
     if (!blog) {
-      return false;
+      return null;
     }
     const newBlog = new this.BlogModel(dto);
     return this.blogRepository.save(newBlog);

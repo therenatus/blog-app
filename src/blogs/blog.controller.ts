@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  Res,
 } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
@@ -31,28 +32,59 @@ export class BlogController {
   }
 
   @Get(':id')
-  async getOneBlog(@Param('id') id: string) {
-    return this.service.getOneBlog(id);
+  async getOneBlog(@Res() res, @Param('id') id: string) {
+    const blog = await this.service.getOneBlog(id);
+    if (!blog) {
+      return res.status(404).json({ message: 'Blog not found' });
+    }
+    return blog;
   }
 
   @Put(':id')
-  async updateOne(@Param('id') id: string, @Body() dto: CreateBlogDto) {
-    return this.service.updateBlog(id, dto);
+  async updateOne(
+    @Res() res,
+    @Param('id') id: string,
+    @Body() dto: CreateBlogDto,
+  ) {
+    const blog = await this.service.updateBlog(id, dto);
+    if (!blog) {
+      return res.status(404).json({ message: 'Blog not found' });
+    }
+    return blog;
   }
 
   @Delete(':id')
-  async deleteOmeBlog(@Param('id') id: string) {
-    return this.service.deleteBlog(id);
+  async deleteOmeBlog(@Res() res, @Param('id') id: string) {
+    const blog = await this.service.deleteBlog(id);
+    if (!blog) {
+      return res.status(404).json({ message: 'Blog not found' });
+    }
+    return blog;
   }
 
   @Post(':id/posts')
-  async createPost(@Param('id') id: string, @Body() dto: CreateBlogsPostDto) {
-    return this.service.createPost(id, dto);
+  async createPost(
+    @Res() res,
+    @Param('id') id: string,
+    @Body() dto: CreateBlogsPostDto,
+  ) {
+    const posts = await this.service.createPost(id, dto);
+    if (!posts) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    return;
   }
 
   @Get(':id/posts')
-  async getBlogsPosts(@Param('id') id: string, @Query() query: any) {
-    console.log(id);
-    return this.service.getBlogsPosts(id, query);
+  async getBlogsPosts(
+    @Param('id') id: string,
+    @Query() query: any,
+    @Res() res,
+  ) {
+    const posts = await this.service.getBlogsPosts(id, query);
+    if (!posts) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    return posts;
   }
 }
