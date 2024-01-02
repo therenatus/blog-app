@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserModelType } from './schema/user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
+import { deleteIDandV } from '../helpers/simplefy';
 
 @Injectable()
 export class UserBusinessLayer {
@@ -9,6 +10,7 @@ export class UserBusinessLayer {
 
   async createUser(dto: CreateUserDto): Promise<User> {
     const user = this.userModel.makeInstance(dto);
-    return user.save();
+    const createdUser = await user.save();
+    return deleteIDandV(createdUser);
   }
 }

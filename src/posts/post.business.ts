@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Post, PostDocument, PostModelType } from './schema/post.schema';
 import { CreatePostDto } from './dto/create-post.dto';
 import { BlogRepository } from '../blogs/blog.repository';
+import { deleteIDandV } from '../helpers/simplefy';
 
 @Injectable()
 export class PostBusinessLayer {
@@ -22,8 +23,8 @@ export class PostBusinessLayer {
 
     const postInstance = { ...dto, blogName: blog.name };
     const post = this.PostModel.makeInstance(postInstance);
-
-    return post.save();
+    const createdPost = await post.save();
+    return deleteIDandV(createdPost);
   }
 
   async updatePost(

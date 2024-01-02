@@ -8,6 +8,7 @@ import { Post } from '../posts/schema/post.schema';
 import { BlogBusinessLayer } from './blog.business';
 import { PostQuery } from '../posts/query/post.query';
 import { PaginationResponse } from '../types/pagination-response.type';
+import { deleteIDandV } from '../helpers/simplefy';
 
 @Injectable()
 export class BlogService {
@@ -19,8 +20,9 @@ export class BlogService {
   ) {}
 
   async createBlog(dto: CreateBlogDto): Promise<Blog> {
-    const blog = this.BlogModel.makeInstance(dto);
-    return this.blogRepository.save(blog);
+    const blogInstance = this.BlogModel.makeInstance(dto);
+    const createdBlog = await this.blogRepository.save(blogInstance);
+    return deleteIDandV(createdBlog);
   }
 
   async createPost(id: string, dto: CreateBlogsPostDto): Promise<Post | null> {

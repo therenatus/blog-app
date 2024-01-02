@@ -10,6 +10,6 @@ export class CommentRepository {
   ) {}
 
   async getOneComment(id: string): Promise<Comment | null> {
-    return this.commentModel.findOne({ id });
+    return this.commentModel.findOne({ id }, { _id: 0, __v: 0 });
   }
 }

@@ -12,7 +12,7 @@ export class BlogRepository {
   }
 
   async getOneBlog(id: string): Promise<Blog | null> {
-    return this.BlogModel.findOne({ id });
+    return this.BlogModel.findOne({ id }, { _id: 0, __v: 0 });
   }
 
   async deleteOneBlog(id: string): Promise<boolean> {

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CommentRepository } from './comment.repository';
+import { deleteIDandV } from '../helpers/simplefy';
 
 @Injectable()
 export class CommentService {
@@ -7,6 +8,7 @@ export class CommentService {
 
   async getOneComment(id: string): Promise<any | null> {
     const comment: any = this.repository.getOneComment(id);
+    const newComment = deleteIDandV(comment);
     const likesInfo = {
       likesCount: 0,
       dislikesCount: 0,
@@ -16,8 +18,8 @@ export class CommentService {
       userId: 'string',
       userLogin: 'string',
     };
-    comment.likesInfo = likesInfo;
-    comment.commentatorInfo = commentatorInfo;
-    return comment;
+    newComment.likesInfo = likesInfo;
+    newComment.commentatorInfo = commentatorInfo;
+    return newComment;
   }
 }
