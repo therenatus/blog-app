@@ -38,8 +38,11 @@ export class PostBusinessLayer {
     return new this.PostModel(dto);
   }
 
-  async getPostWithLikes(id: string): Promise<PostResponseType> {
+  async getPostWithLikes(id: string): Promise<PostResponseType | null> {
     const post = await this.postRepository.getOnePost(id);
+    if (!post) {
+      return null;
+    }
     const simplePost = JSON.parse(JSON.stringify(post));
     const likesInfo = {
       likesCount: 0,

@@ -27,7 +27,7 @@ export class BlogQuery {
       .skip(+pageSize * (pageNumber - 1))
       .limit(+pageSize)
       .exec();
-    const count = await this.BlogModel.find().countDocuments();
+    const count = await this.BlogModel.find(filter).countDocuments();
     return this.pagination(blogs, count, querySearch);
   }
 

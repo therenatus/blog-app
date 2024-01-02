@@ -39,7 +39,7 @@ export class PostQuery {
         };
         return {
           ...simplePost,
-          likesInfo: likesInfo,
+          extendedLikesInfo: likesInfo,
         };
       }),
     );

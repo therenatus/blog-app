@@ -6,6 +6,10 @@ import { User, UserModelType } from './schema/user.schema';
 export class UserRepository {
   constructor(@InjectModel(User.name) private userModel: UserModelType) {}
 
+  async getUserByEmail(email: string) {
+    return this.userModel.findOne({ email });
+  }
+
   async deleteUser(id: string): Promise<boolean> {
     const { deletedCount } = await this.userModel.deleteOne({ id });
     return deletedCount === 1;

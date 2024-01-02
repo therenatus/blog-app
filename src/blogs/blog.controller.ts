@@ -60,7 +60,7 @@ export class BlogController {
     if (!blog) {
       return res.status(404).json({ message: 'Blog not found' });
     }
-    return blog;
+    return res.status(204).json();
   }
 
   @Post(':id/posts')

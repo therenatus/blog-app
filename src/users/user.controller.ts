@@ -27,8 +27,11 @@ export class UserController {
   }
 
   @Post()
-  async createUser(@Body() dto: CreateUserDto): Promise<User> {
-    return this.service.createUser(dto);
+  async createUser(@Res() res, @Body() dto: CreateUserDto) {
+    const user = await this.service.createUser(dto);
+    if (user) {
+      return res.status(201).json(user);
+    }
   }
 
   @Delete(':id')
@@ -37,6 +40,6 @@ export class UserController {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    return;
+    return res.status(204).json();
   }
 }

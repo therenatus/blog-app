@@ -36,7 +36,7 @@ export class BlogBusinessLayer {
     };
     return {
       ...simplePost,
-      likesInfo: likesInfo,
+      extendedLikesInfo: likesInfo,
     };
   }
 }

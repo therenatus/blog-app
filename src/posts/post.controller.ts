@@ -47,7 +47,7 @@ export class PostController {
     if (!comment) {
       return res.status(404).json({ message: 'Posts not found' });
     }
-    return comment;
+    return res.status(404).json(comment);
   }
 
   @Put(':id')
@@ -60,7 +60,7 @@ export class PostController {
     if (!post) {
       return res.status(404).json({ message: 'Posts not found' });
     }
-    return;
+    return res.status(204).json();
   }
 
   @Delete(':id')
@@ -69,6 +69,6 @@ export class PostController {
     if (!post) {
       return res.status(404).json({ message: 'Posts not found' });
     }
-    return;
+    return res.status(204).json();
   }
 }
