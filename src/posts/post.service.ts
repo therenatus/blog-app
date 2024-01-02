@@ -20,11 +20,7 @@ export class PostService {
   }
 
   async updatePost(id: string, dto: CreatePostDto): Promise<Post | null> {
-    const updatedPost = await this.postBusinessLayer.updatePost(id, dto);
-    if (!updatedPost) {
-      return null;
-    }
-    return this.postRepository.save(updatedPost);
+    return this.postBusinessLayer.updatePost(id, dto);
   }
 
   async deletePost(id: string): Promise<boolean> {

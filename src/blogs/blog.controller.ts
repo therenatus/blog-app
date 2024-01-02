@@ -51,7 +51,7 @@ export class BlogController {
     if (!blog) {
       return res.status(404).json({ message: 'Blog not found' });
     }
-    return res.status(200).json(blog);
+    return res.status(204).json(blog);
   }
 
   @Delete(':id')
@@ -73,7 +73,7 @@ export class BlogController {
     if (!posts) {
       return res.status(404).json({ message: 'Post not found' });
     }
-    return res.status(200).json(posts);
+    return res.status(201).json(posts);
   }
 
   @Get(':id/posts')

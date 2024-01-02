@@ -7,7 +7,7 @@ export class UserRepository {
   constructor(@InjectModel(User.name) private userModel: UserModelType) {}
 
   async getUserByEmail(email: string) {
-    return this.userModel.findOne({ email });
+    return this.userModel.findOne({ email }).select('-password');
   }
 
   async deleteUser(id: string): Promise<boolean> {

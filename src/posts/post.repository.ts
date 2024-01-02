@@ -12,8 +12,8 @@ export class PostRepository {
     return post.save();
   }
 
-  async getOnePost(id: string): Promise<PostType | null> {
-    return this.PostModel.findOne({ id }, { _id: 0, __v: 0 });
+  async getOnePost(id: string): Promise<PostDocument | null> {
+    return this.PostModel.findOne({ id });
   }
 
   async deleteOnePost(id: string): Promise<boolean> {

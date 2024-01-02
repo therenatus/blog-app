@@ -24,26 +24,7 @@ export class PostBusinessLayer {
     const postInstance = { ...dto, blogName: blog.name };
     const post = this.PostModel.makeInstance(postInstance);
     const createdPost = await post.save();
-    return deleteIDandV(createdPost);
-  }
-
-  async updatePost(
-    id: string,
-    dto: CreatePostDto,
-  ): Promise<PostDocument | null> {
-    const blog = await this.postRepository.getOnePost(id);
-    if (!blog) {
-      return null;
-    }
-    return new this.PostModel(dto);
-  }
-
-  async getPostWithLikes(id: string): Promise<PostResponseType | null> {
-    const post = await this.postRepository.getOnePost(id);
-    if (!post) {
-      return null;
-    }
-    const simplePost = JSON.parse(JSON.stringify(post));
+    const simplePost = deleteIDandV(createdPost);
     const likesInfo = {
       likesCount: 0,
       dislikesCount: 0,
@@ -52,7 +33,38 @@ export class PostBusinessLayer {
     };
     return {
       ...simplePost,
-      likesInfo: likesInfo,
+      extendedLikesInfo: likesInfo,
+    };
+  }
+
+  async updatePost(
+    id: string,
+    dto: CreatePostDto,
+  ): Promise<PostDocument | null> {
+    const post = await this.postRepository.getOnePost(id);
+    if (!post) {
+      return null;
+    }
+    Object.assign(post, dto);
+    const newPost = await post.save();
+    return deleteIDandV(newPost);
+  }
+
+  async getPostWithLikes(id: string): Promise<PostResponseType | null> {
+    const post = await this.postRepository.getOnePost(id);
+    if (!post) {
+      return null;
+    }
+    const simplePost = deleteIDandV(post);
+    const likesInfo = {
+      likesCount: 0,
+      dislikesCount: 0,
+      myStatus: 'None',
+      newestLikes: [],
+    };
+    return {
+      ...simplePost,
+      extendedLikesInfo: likesInfo,
     };
   }
 }
