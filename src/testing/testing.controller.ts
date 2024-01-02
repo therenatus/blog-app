@@ -1,10 +1,11 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Delete } from '@nestjs/common';
 import { TestingRepository } from './testing.repository';
 
-@Controller()
+@Controller('testing')
 export class TestingController {
   constructor(private readonly repository: TestingRepository) {}
 
+  @Delete('all-data')
   async deleteAll() {
     return await this.repository.deleteAll();
   }
