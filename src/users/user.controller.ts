@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Query,
+  Res,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { PaginationResponse } from '../types/pagination-response.type';
@@ -31,7 +32,11 @@ export class UserController {
   }
 
   @Delete(':id')
-  async deleteUser(@Param('id') id: string): Promise<boolean> {
-    return this.service.deleteUser(id);
+  async deleteUser(@Res() res, @Param('id') id: string): Promise<boolean> {
+    const user = await this.service.deleteUser(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    return;
   }
 }
