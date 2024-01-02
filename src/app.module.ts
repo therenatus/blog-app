@@ -7,6 +7,7 @@ import * as process from 'node:process';
 import { BlogModule } from './blogs/blog.module';
 import { PostModule } from './posts/post.module';
 import { UserModule } from './users/user.module';
+import { CommentModule } from './comments/comment.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { UserModule } from './users/user.module';
     BlogModule,
     PostModule,
     UserModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

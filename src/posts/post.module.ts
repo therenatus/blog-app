@@ -7,11 +7,13 @@ import { PostRepository } from './post.repository';
 import { PostBusinessLayer } from './post.business';
 import { PostQuery } from './query/post.query';
 import { BlogModule } from '../blogs/blog.module';
+import { CommentModule } from '../comments/comment.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
     forwardRef(() => BlogModule),
+    CommentModule,
   ],
   controllers: [PostController],
   providers: [PostService, PostRepository, PostBusinessLayer, PostQuery],
