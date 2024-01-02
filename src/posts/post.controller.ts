@@ -38,7 +38,7 @@ export class PostController {
     if (!post) {
       return res.status(404).json({ message: 'Posts not found' });
     }
-    return post;
+    return res.status(200).json(post);
   }
 
   @Get(':id/posts')

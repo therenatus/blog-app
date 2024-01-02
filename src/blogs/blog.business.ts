@@ -8,6 +8,7 @@ import {
   PostStaticType,
 } from '../posts/schema/post.schema';
 import { Model } from 'mongoose';
+import { deleteIDandV } from '../helpers/simplefy';
 
 @Injectable()
 export class BlogBusinessLayer {
@@ -25,6 +26,17 @@ export class BlogBusinessLayer {
 
     const postInstance = { ...dto, blogName: blog.name, blogId: blog.id };
     const post = this.PostModel.makeInstance(postInstance);
-    return post.save();
+    const newPost = await post.save();
+    const simplePost = deleteIDandV(newPost);
+    const likesInfo = {
+      likesCount: 0,
+      dislikesCount: 0,
+      myStatus: 'None',
+      newestLikes: [],
+    };
+    return {
+      ...simplePost,
+      likesInfo: likesInfo,
+    };
   }
 }

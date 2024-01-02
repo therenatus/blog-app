@@ -10,17 +10,25 @@ import { PaginationResponse } from '../../types/pagination-response.type';
 export class BlogQuery {
   constructor(@InjectModel(Blog.name) private BlogModel: Model<BlogDocument>) {}
   async getAllBlogs(query: any) {
-    const getQueries = QueryBuilder(query);
-    const { sortDirection, pageSize, pageNumber, sortBy } = getQueries;
+    const querySearch = QueryBuilder(query);
+    const { searchNameTerm, sortBy, sortDirection, pageSize, pageNumber } =
+      querySearch;
+
     const sortOptions: { [key: string]: any } = {};
     sortOptions[sortBy as string] = sortDirection;
-    const blogs = await this.BlogModel.find({}, { _id: 0, __v: 0 })
+    let filter: any = {};
+    if (searchNameTerm) {
+      filter = {
+        name: { $regex: searchNameTerm, $options: 'i' },
+      };
+    }
+    const blogs = await this.BlogModel.find(filter, { _id: 0, __v: 0 })
       .sort(sortOptions)
       .skip(+pageSize * (pageNumber - 1))
       .limit(+pageSize)
       .exec();
     const count = await this.BlogModel.find().countDocuments();
-    return this.pagination(blogs, count, getQueries);
+    return this.pagination(blogs, count, querySearch);
   }
 
   private pagination(blogs: Blog[], count: number, filter: QueryType) {

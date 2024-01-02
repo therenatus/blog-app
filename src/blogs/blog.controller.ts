@@ -34,10 +34,11 @@ export class BlogController {
   @Get(':id')
   async getOneBlog(@Res() res, @Param('id') id: string) {
     const blog = await this.service.getOneBlog(id);
+    console.log(blog);
     if (!blog) {
       return res.status(404).json({ message: 'Blog not found' });
     }
-    return blog;
+    return res.status(200).json(blog);
   }
 
   @Put(':id')
@@ -50,11 +51,11 @@ export class BlogController {
     if (!blog) {
       return res.status(404).json({ message: 'Blog not found' });
     }
-    return blog;
+    return res.status(200).json(blog);
   }
 
   @Delete(':id')
-  async deleteOmeBlog(@Res() res, @Param('id') id: string) {
+  async deleteOneBlog(@Res() res, @Param('id') id: string) {
     const blog = await this.service.deleteBlog(id);
     if (!blog) {
       return res.status(404).json({ message: 'Blog not found' });
@@ -72,7 +73,7 @@ export class BlogController {
     if (!posts) {
       return res.status(404).json({ message: 'Post not found' });
     }
-    return;
+    return res.status(200).json(posts);
   }
 
   @Get(':id/posts')
@@ -85,6 +86,6 @@ export class BlogController {
     if (!posts) {
       return res.status(404).json({ message: 'Post not found' });
     }
-    return posts;
+    return res.status(200).json(posts);
   }
 }
