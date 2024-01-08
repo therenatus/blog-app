@@ -3,6 +3,7 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { User } from './decorators/user.decorator';
+import { BasicAuthGuard } from './guards/basic-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -18,5 +19,11 @@ export class AuthController {
   @Get('me')
   async getMe(@User() userId: string) {
     return userId;
+  }
+
+  @UseGuards(BasicAuthGuard)
+  @Get('for-sa')
+  async forSA() {
+    return 'admin';
   }
 }
