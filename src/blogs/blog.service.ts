@@ -9,7 +9,6 @@ import { BlogBusinessLayer } from './blog.business';
 import { PostQuery } from '../posts/query/post.query';
 import { PaginationResponse } from '../types/pagination-response.type';
 import { deleteIDandV } from '../helpers/simplefy';
-import { validateOrReject } from 'class-validator';
 
 @Injectable()
 export class BlogService {
@@ -62,14 +61,3 @@ export class BlogService {
     return this.blogRepository.deleteOneBlog(id);
   }
 }
-
-const validate0rRejectModel = async (model: any, ctor: { new (): any }) => {
-  if (!(model instanceof ctor)) {
-    throw new Error('Incorrect input data');
-  }
-  try {
-    await validateOrReject(model);
-  } catch (error) {
-    throw new Error(error);
-  }
-};
