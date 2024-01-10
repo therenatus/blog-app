@@ -35,9 +35,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
         errors: [] as string[],
       };
       const responseBody: any = exception.getResponse();
-      responseBody.message.forEach((m) => errorResponse.errors.push(m));
-
-      return response.status(status).json(errorResponse);
+      if (Array.isArray(responseBody.message)) {
+        responseBody.message.forEach((m) => errorResponse.errors.push(m));
+        return response.status(status).json(errorResponse);
+      } else if (typeof responseBody.message === 'string') {
+        return response.status(status).json(responseBody.message);
+      }
     }
 
     response.status(status).json({
