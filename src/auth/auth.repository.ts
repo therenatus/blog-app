@@ -8,7 +8,6 @@ export class AuthRepository {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   async findOneByLoginOrEmail(term: string) {
-    console.log(term);
     return this.userModel
       .findOne({
         $or: [{ login: term }, { email: term }],

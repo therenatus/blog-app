@@ -10,6 +10,7 @@ import { AuthRepository } from './auth.repository';
 import { jwtConstants } from './constants';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { BasicStrategy } from './strategies/basic.strategy';
+import { EmailModule } from '../email/email.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { BasicStrategy } from './strategies/basic.strategy';
     JwtModule.register({
       secret: jwtConstants.secret,
     }),
+    EmailModule,
   ],
   providers: [
     AuthService,

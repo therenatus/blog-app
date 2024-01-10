@@ -1,9 +1,17 @@
-import { Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { User } from './decorators/user.decorator';
 import { BasicAuthGuard } from './guards/basic-auth.guard';
+import { RegistrationDto } from './dto/registration.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -25,5 +33,11 @@ export class AuthController {
   @Get('for-sa')
   async forSA() {
     return 'admin';
+  }
+
+  @Post('registration')
+  @HttpCode(204)
+  async registration(@Body() dto: RegistrationDto) {
+    return this.service.registration(dto);
   }
 }
