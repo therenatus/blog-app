@@ -17,7 +17,7 @@ export class BlogQuery {
     sortBy = sortBy || 'createdAt';
     sortDirection = sortDirection || 'desc';
     const sortOptions: { [key: string]: any } = {};
-    sortOptions[sortBy as string] = sortDirection;
+    sortOptions[sortBy] = sortDirection === 'desc' ? -1 : 1;
     let filter: any = {};
     if (searchNameTerm) {
       filter = {
