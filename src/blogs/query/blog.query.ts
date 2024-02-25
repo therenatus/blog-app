@@ -11,9 +11,11 @@ export class BlogQuery {
   constructor(@InjectModel(Blog.name) private BlogModel: Model<BlogDocument>) {}
   async getAllBlogs(query: any) {
     const querySearch = QueryBuilder(query);
-    const { searchNameTerm, sortBy, sortDirection, pageSize, pageNumber } =
-      querySearch;
+    let { sortBy, sortDirection } = querySearch;
+    const { searchNameTerm, pageSize, pageNumber } = querySearch;
 
+    sortBy = sortBy || 'createdAt';
+    sortDirection = sortDirection || 'desc';
     const sortOptions: { [key: string]: any } = {};
     sortOptions[sortBy as string] = sortDirection;
     let filter: any = {};
