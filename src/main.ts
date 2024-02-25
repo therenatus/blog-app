@@ -6,10 +6,9 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 
 const server = express();
 export async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
   appSettings(app);
   await app.listen(3000);
-  new ExpressAdapter(server);
 }
 bootstrap();
 export default server;
