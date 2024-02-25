@@ -51,6 +51,7 @@ UserSchema.statics.makeInstance = function (
   return new this({
     accountData: {
       ...dto,
+      createdAt: new Date(),
     },
     emailConfirmation: {
       confirmationCode,

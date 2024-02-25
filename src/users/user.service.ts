@@ -11,7 +11,7 @@ export class UserService {
     private readonly userBusinessLayer: UserBusinessLayer,
   ) {}
 
-  async createUser(dto: CreateUserDto): Promise<User | null> {
+  async createUser(dto: CreateUserDto) {
     const user = await this.repository.getUserByEmail(dto.email);
     if (user) {
       return null;

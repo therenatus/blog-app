@@ -56,6 +56,7 @@ export class UserQuery {
       .skip(+pageSize * (pageNumber - 1))
       .limit(+pageSize)
       .exec();
+    console.log(users);
     users.map((user) => userResponse.push(UserViewMapper(user)));
     return this.pagination(userResponse, totalCount, querySearch);
   }
