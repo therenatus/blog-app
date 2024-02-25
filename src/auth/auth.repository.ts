@@ -10,8 +10,8 @@ export class AuthRepository {
   async findOneByLoginOrEmail(term: string) {
     return this.userModel
       .findOne({
-        $or: [{ login: term }, { email: term }],
+        $or: [{ 'accountData.login': term }, { 'accountData.email': term }],
       })
-      .select('+password');
+      .select('+accountData.password');
   }
 }

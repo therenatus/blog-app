@@ -3,7 +3,7 @@ import { HydratedDocument, Model } from 'mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
 
 @Schema()
-export class User {
+export class AccountData {
   @Prop()
   id: string;
 
@@ -20,19 +20,48 @@ export class User {
   password: string;
 }
 
+@Schema()
+export class EmailConfirmation {
+  @Prop()
+  confirmationCode: string;
+
+  @Prop()
+  expirationDate: Date;
+
+  @Prop()
+  isConfirmed: boolean;
+}
+
+@Schema()
+export class User {
+  @Prop()
+  accountData: AccountData;
+
+  @Prop()
+  emailConfirmation: EmailConfirmation;
+}
+
 export const UserSchema = SchemaFactory.createForClass(User);
 
-UserSchema.statics.makeInstance = function (dto: CreateUserDto) {
+UserSchema.statics.makeInstance = function (
+  dto: CreateUserDto,
+  confirmationCode: string,
+) {
   const date = new Date();
   return new this({
-    ...dto,
-    createdAt: date,
-    id: (+date).toString(),
+    accountData: {
+      ...dto,
+    },
+    emailConfirmation: {
+      confirmationCode,
+      expirationDate: date.setMinutes(date.getMinutes() + 15),
+      isConfirmed: false,
+    },
   });
 };
 
 export type UserDocument = HydratedDocument<User>;
 export type UserStaticType = {
-  makeInstance(dto: CreateUserDto): UserDocument;
+  makeInstance(dto: CreateUserDto, confirmationCode: string): UserDocument;
 };
 export type UserModelType = Model<User> & UserStaticType;

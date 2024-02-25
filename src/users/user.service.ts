@@ -19,6 +19,10 @@ export class UserService {
     return this.userBusinessLayer.createUser(dto);
   }
 
+  async getUserById(id: string): Promise<User | null> {
+    return this.repository.getUserById(id);
+  }
+
   async deleteUser(id: string): Promise<boolean> {
     return this.repository.deleteUser(id);
   }

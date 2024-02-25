@@ -17,6 +17,7 @@ import { RegistrationDto } from './dto/registration.dto';
 export class AuthController {
   constructor(private readonly service: AuthService) {}
 
+  @HttpCode(200)
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@User() userId: string) {
@@ -35,8 +36,8 @@ export class AuthController {
     return 'admin';
   }
 
-  @Post('registration')
   @HttpCode(204)
+  @Post('registration')
   async registration(@Body() dto: RegistrationDto) {
     return this.service.registration(dto);
   }

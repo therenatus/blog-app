@@ -6,11 +6,11 @@ import { User } from '../users/schema/user.schema';
 export class EmailService {
   constructor(private readonly emailAdapter: EmailAdapter) {}
 
-  async sendConfirmMessage(user: User) {
+  async sendConfirmMessage(email: string, confirmationCode: string) {
     await this.emailAdapter.sendEmail(
-      user.email,
+      email,
       'Please, confirm email',
-      '454545',
+      confirmationCode,
     );
   }
 }

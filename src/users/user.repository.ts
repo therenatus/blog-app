@@ -10,6 +10,10 @@ export class UserRepository {
     return this.userModel.findOne({ email });
   }
 
+  async getUserById(id: string) {
+    return this.userModel.findOne({ 'accountData.id': id });
+  }
+
   async deleteUser(id: string): Promise<boolean> {
     const { deletedCount } = await this.userModel.deleteOne({ id });
     return deletedCount === 1;

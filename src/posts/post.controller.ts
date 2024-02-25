@@ -8,11 +8,13 @@ import {
   Put,
   Query,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { PostQuery } from './query/post.query';
 import { CommentService } from '../comments/comment.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('posts')
 export class PostController {
@@ -27,6 +29,7 @@ export class PostController {
     return this.postQuery.getAllPosts(query);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   async createPost(@Body() dto: CreatePostDto) {
     return this.postService.createPost(dto);

@@ -4,6 +4,7 @@ import { User, UserModelType } from '../schema/user.schema';
 import { QueryBuilder } from '../../blogs/helpers';
 import { PaginationResponse } from '../../types/pagination-response.type';
 import { QueryType } from '../../types/query.type';
+import { UserViewMapper } from '../../helpers/user-view.mapper';
 
 @Injectable()
 export class UserQuery {
@@ -28,34 +29,35 @@ export class UserQuery {
 
     if (searchNameTerm) {
       orConditions.push({
-        name: { $regex: searchNameTerm, $options: 'i' },
+        'accountData.name': { $regex: searchNameTerm, $options: 'i' },
       });
     }
 
     if (searchEmailTerm) {
       orConditions.push({
-        email: { $regex: searchEmailTerm, $options: 'i' },
+        'accountData.email': { $regex: searchEmailTerm, $options: 'i' },
       });
     }
 
     if (searchLoginTerm) {
       orConditions.push({
-        login: { $regex: searchLoginTerm, $options: 'i' },
+        'accountData.login': { $regex: searchLoginTerm, $options: 'i' },
       });
     }
 
     if (orConditions.length > 0) {
       filter.$or = orConditions;
     }
-
-    const totalCount = await this.userModel.find(filter).countDocuments();
+    const userResponse: any[] = [];
+    const totalCount = await this.userModel.find().countDocuments();
     const users = await this.userModel
-      .find(filter, { _id: 0, __v: 0 })
+      .find(filter, { __v: 0 })
       .sort(sortOptions)
       .skip(+pageSize * (pageNumber - 1))
       .limit(+pageSize)
       .exec();
-    return this.pagination(users, totalCount, querySearch);
+    users.map((user) => userResponse.push(UserViewMapper(user)));
+    return this.pagination(userResponse, totalCount, querySearch);
   }
 
   private pagination(
