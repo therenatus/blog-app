@@ -12,18 +12,19 @@ export class UserQuery {
 
   async getAllUsers(query: any): Promise<PaginationResponse<User[]>> {
     const querySearch = QueryBuilder(query);
+    let { sortBy, sortDirection } = querySearch;
     const {
       searchEmailTerm,
-      searchLoginTerm,
       searchNameTerm,
-      sortBy,
-      sortDirection,
+      searchLoginTerm,
       pageSize,
       pageNumber,
     } = querySearch;
 
+    sortBy = sortBy || 'createdAt';
+    sortDirection = sortDirection || 'desc';
     const sortOptions: { [key: string]: any } = {};
-    sortOptions[sortBy as string] = sortDirection;
+    sortOptions[sortBy] = sortDirection === 'desc' ? -1 : 1;
     const filter: any = {};
     const orConditions: any = [];
 
