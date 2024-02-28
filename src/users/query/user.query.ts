@@ -25,7 +25,7 @@ export class UserQuery {
     sortDirection = sortDirection || 'desc';
     const sortOptions: { [key: string]: any } = {};
     sortBy = sortBy ? `accountData.${sortBy}` : 'accountData.createdAt';
-    sortOptions[sortBy] = sortDirection === 'desc' ? 1 : -1;
+    sortOptions[sortBy] = sortDirection === 'desc' ? -1 : 1;
     const filter: any = {};
     const orConditions: any = [];
 
