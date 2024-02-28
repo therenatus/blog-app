@@ -22,11 +22,15 @@ export class AuthService {
 
   async validateUser(login: string, pass: string) {
     const user = await this.repository.findOneByLoginOrEmail(login);
-    if (user && user.accountData.password === pass) {
-      const { password, ...result } = JSON.parse(JSON.stringify(user));
-      return result;
+    if (!user) {
+      return null;
     }
-    return null;
+    const validPass = await bcrypt.compare(pass, user.accountData.password);
+    if (!validPass) {
+      return null;
+    }
+    const { password, ...result } = JSON.parse(JSON.stringify(user));
+    return result;
   }
 
   async login(userId: string) {
