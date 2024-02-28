@@ -7,12 +7,14 @@ import {
   Post,
   Query,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { PaginationResponse } from '../types/pagination-response.type';
 import { User } from './schema/user.schema';
 import { UserQuery } from './query/user.query';
 import { CreateUserDto } from './dto/create-user.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('users')
 export class UserController {
@@ -26,7 +28,7 @@ export class UserController {
     return this.query.getAllUsers(query);
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post()
   async createUser(@Res() res, @Body() dto: CreateUserDto) {
     const user = await this.service.createUser(dto);
@@ -35,6 +37,7 @@ export class UserController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async deleteUser(@Res() res, @Param('id') id: string) {
     const user = await this.service.deleteUser(id);
