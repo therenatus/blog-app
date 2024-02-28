@@ -24,7 +24,8 @@ export class UserQuery {
     sortBy = sortBy || 'createdAt';
     sortDirection = sortDirection || 'desc';
     const sortOptions: { [key: string]: any } = {};
-    sortOptions[sortBy] = sortDirection === 'desc' ? -1 : 1;
+    sortBy = sortBy ? `accountData.${sortBy}` : 'accountData.createdAt';
+    sortOptions[sortBy] = sortDirection === 'desc' ? 1 : -1;
     const filter: any = {};
     const orConditions: any = [];
 
@@ -50,7 +51,7 @@ export class UserQuery {
       filter.$or = orConditions;
     }
     const userResponse: any[] = [];
-    const totalCount = await this.userModel.find().countDocuments();
+    const totalCount = await this.userModel.find(filter).countDocuments();
     const users = await this.userModel
       .find(filter, { __v: 0 })
       .sort(sortOptions)

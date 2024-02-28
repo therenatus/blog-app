@@ -26,6 +26,7 @@ export class UserController {
     return this.query.getAllUsers(query);
   }
 
+  // @UseGuards(JwtAuthGuard)
   @Post()
   async createUser(@Res() res, @Body() dto: CreateUserDto) {
     const user = await this.service.createUser(dto);
