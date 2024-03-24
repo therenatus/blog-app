@@ -1,3 +1,4 @@
+import { Response } from 'express';
 import {
   Body,
   Controller,
@@ -39,7 +40,11 @@ export class UserController {
 
   @UseGuards(BasicAuthGuard)
   @Delete(':id')
-  async deleteUser(@Res() res, @Param('id') id: string) {
+  async deleteUser(@Res() res: Response, @Param('id') id: string) {
+    if (!id) {
+      res.status(404).json();
+      return;
+    }
     const user = await this.service.deleteUser(id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
