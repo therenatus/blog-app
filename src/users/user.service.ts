@@ -24,6 +24,10 @@ export class UserService {
   }
 
   async deleteUser(id: string): Promise<boolean> {
+    const user = await this.getUserById(id);
+    if (!user) {
+      return false;
+    }
     return this.repository.deleteUser(id);
   }
 }
