@@ -11,7 +11,7 @@ export class UserRepository {
   }
 
   async getUserById(id: string) {
-    return this.userModel.findOne({ 'accountData.id': id });
+    return this.userModel.findOne({ 'accountData._id': id });
   }
 
   async deleteUser(id: string): Promise<boolean> {
